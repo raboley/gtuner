@@ -1,0 +1,7 @@
+#pragma METAINFO("XBONE Elite PS4 Crossover", 1, 0, "")
+#include "XboxEliteCrossoverFixPS4.gph"
+
+main {
+
+
+}

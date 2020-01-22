@@ -1,0 +1,26 @@
+#pragma METAINFO("<author_name>", 1, 0, "")
+
+combo getDagger {
+		set_val(BUTTON_13, 100.0);
+		wait (50);
+		set_val(BUTTON_13, 0.0);	
+	wait (60);
+		set_val(BUTTON_16, 100.0);
+		wait (50);
+		set_val(BUTTON_16, 0.0);
+	wait (1000);
+}
+
+combo backToStart {
+		wait (1000);
+			set_val(BUTTON_12, 100.0);
+			wait (50);
+			set_val(BUTTON_12, 0.0);
+}
+
+main {
+	if (get_val(BUTTON_6)){
+	combo_run(getDagger);
+	combo_run(backToStart);
+	}
+}

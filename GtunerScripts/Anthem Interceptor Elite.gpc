@@ -1,0 +1,85 @@
+#pragma METAINFO("Anthem Interceptor Elite", 1, 0, "")
+#include "XboxEliteCrossoverFixPS4.gph"
+#include <titanone.gph>
+
+int interceptor_mode = 0;
+define DPAD_DOWN     = 14;     // XB1_DOWN    XB360_DOWN   PS4_DOWN         PS3_DOWN
+define SHOOT         = 4;      // XB1_RT      XB360_RT     PS4_R2           PS3_R2
+define ADS           = 7;      // XB1_LT      XB360_LT     PS4_L2           PS3_L2
+define MELEE   = 17;     // XB1_Y       XB360_Y      PS4_TRIANGLE     PS3_TRIANGLE
+
+int Pri_HIP_Hold = 10;
+int Pri_Hip_V = 10;
+int HoldTime;
+int RestTime;
+
+uint8 RumbleStrength = 60;  // Set to 0 to disable rumble
+uint16 RumbleLength = 250; // Tweak to increase / decrease rumble length
+
+
+main {
+    if (get_val (DPAD_DOWN) && event_active (SHOOT)) 
+        { interceptor_mode=!interceptor_mode; 
+            if (interceptor_mode) { 
+				combo_run (Rumble); 
+				LED (0,0,0,1); 
+				}
+            else if (!interceptor_mode) { 
+				combo_run (DoubleRumble); 
+				LED (0,0,0,0);
+				}
+        }
+     
+	if (interceptor_mode) { 
+			
+		
+			if (get_val (ADS) && get_val (SHOOT)) {
+				RapidFireSpeed (Pri_HIP_Hold, Pri_Hip_V);
+			}
+			if (!(get_val (ADS)) && get_val (SHOOT)) { 
+				set_val(SHOOT, 0);
+				set_val(MELEE, 100);
+			}
+		} 
+    else if (!interceptor_mode) { 
+
+		}
+
+}
+
+function RapidFireSpeed (RF_HoldTime, RF_RestTime)
+{   
+    HoldTime = RF_HoldTime; 
+	RestTime = RF_RestTime;
+    if (HoldTime > 0)
+        { combo_run(RapidFire); }
+}
+
+combo RapidFire 
+{
+    set_val(SHOOT, 100);
+    wait(HoldTime);
+    set_val(SHOOT, 0);
+    wait(RestTime);
+    set_val(SHOOT, 0);
+}
+
+combo Rumble {
+    ffb_set(FFB_1, (fix32) RumbleStrength, 180);
+    wait(0); wait(RumbleLength);
+    ffb_set(FFB_1, 0.0, 180);
+    wait(0); wait(RumbleLength);
+}
+ 
+combo DoubleRumble {
+    call (Rumble);
+    call (Rumble);
+}
+
+function LED(a, b, c, d) // Make the lights pretty
+ {
+    set_led(0, a);
+    set_led(1, b);
+    set_led(2, c);
+    set_led(3, d);
+ }

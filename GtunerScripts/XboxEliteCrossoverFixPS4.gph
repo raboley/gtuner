@@ -1,0 +1,79 @@
+#ifndef XboxEliteCrossoverFixPS4
+#define XboxEliteCrossoverFixPS4
+
+/*---------- Crossover (XB1 Controller and Elite Controller on PS4) --------- */
+/* ------------------------- Runtime Operations: ----------------------------
+                       Tap view button to get share.
+	             Double tap view button to get touch click.
+	                  Tap menu button to get options.
+					  
+		                   Touch Pad Details:
+	               Double tap menu to lock in touch pad.
+	              Use right stick for one finger movement.
+	         Use right and left stick for two finger movement.
+			Tap menu quick to release to normal use once done.
+ ---------------------------------------------------------------------------- */
+uint8 statusIn,  protocolIn,  deviceIn;
+uint8 statusOut, protocolOut, deviceOut;
+bool double_tap;
+bool double_tap2;
+
+main {
+	statusIn  = port_status(PORT_USB_A, &protocolIn,  &deviceIn);
+	statusOut = port_status(PORT_USB_C, &protocolOut, &deviceOut);
+
+	if(protocolIn == PROTOCOL_XB1 || protocolIn == PROTOCOL_XB1_WRC
+	&& protocolOut == PROTOCOL_PS4) { 
+	inhibit(BUTTON_2, 160);
+	if(event_active(BUTTON_2) && time_release(BUTTON_2) < 160) {
+	    double_tap = 1;
+	}else if(event_release(BUTTON_2)) {
+	    double_tap = 0;
+	}
+	if(get_val(BUTTON_2)) {
+		set_val(BUTTON_2, 100.0);
+		set_val(BUTTON_18, 0.0);
+	}
+	if(double_tap == 1) {
+	    set_val(BUTTON_18, `100.0);
+	    set_val(BUTTON_2, 0.0);
+	}
+	inhibit(BUTTON_3, 160);
+	if(event_active(BUTTON_3) && time_release(BUTTON_3) < 160) {
+	    double_tap2 = 1;
+	}else if(event_active(BUTTON_3)) {
+	    double_tap2 = 0;
+	}
+	if(double_tap2 == 1) {
+	    set_val(BUTTON_3, 0.0);
+	    set_val(BUTTON_19, 100.0);
+		set_val(BUTTON_20, 100.0);
+		set_val(POINT_1_Y, 0.0);
+		set_val(POINT_1_Y, get_val(STICK_1_Y));
+		set_val(STICK_1_Y, get_val(-STICK_1_Y));
+		set_val(POINT_1_X, 0.0);
+		set_val(POINT_1_X, get_val(STICK_1_X));
+		set_val(STICK_1_X, get_val(-STICK_1_X));
+		set_val(POINT_2_Y, 0.0);
+		set_val(POINT_2_Y, get_val(STICK_2_Y));
+		set_val(STICK_2_Y, get_val(-STICK_2_Y));
+		set_val(POINT_2_X, 0.0);
+		set_val(POINT_2_X, get_val(STICK_2_X));
+		set_val(STICK_2_X, get_val(-STICK_2_X));
+	}
+	//Ignore Xbox Elite paddle buttons since they pass in the buttons programmed in the xbox accessory app.
+	if(get_actual(BUTTON_18)) {
+		set_val(BUTTON_18, 0.0);
+	}
+	if(get_actual(BUTTON_19)) {
+		set_val(BUTTON_19, 0.0);
+	}
+	if (get_actual(BUTTON_20)) {
+        set_val(BUTTON_20, 0.0);
+    }
+    if (get_actual(BUTTON_21)) {
+        set_val(BUTTON_21, 0.0);
+    }
+    }
+}
+#endif /* XboxEliteCrossoverFixPS4 */

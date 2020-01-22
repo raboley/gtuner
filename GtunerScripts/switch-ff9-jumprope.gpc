@@ -1,0 +1,311 @@
+#pragma METAINFO("<author_name>", 1, 0, "")
+#include <titanone.gph>
+
+define UP = 13;
+define DOWN = 14;
+define LEFT = 15;
+define RIGHT = 16;
+define A = 18;
+define B = 19;
+/*
+SWITCH_HOME             0
+SWITCH_MINUS            1
+SWITCH_PLUS             2
+SWITCH_R                3
+SWITCH_ZR               4
+SWITCH_SR               5
+SWITCH_L                6
+SWITCH_ZL               7
+SWITCH_SL               8
+SWITCH_RX               9
+SWITCH_RY               10
+SWITCH_LX               11
+SWITCH_LY               12
+SWITCH_UP               13
+SWITCH_DOWN             14
+SWITCH_LEFT             15
+SWITCH_RIGHT            16
+SWITCH_X                17
+SWITCH_A                18
+SWITCH_B                19
+SWITCH_Y                20
+SWITCH_ACCX             21
+SWITCH_ACCY             22
+SWITCH_ACCZ             23
+SWITCH_GYROX            24
+SWITCH_GYROY            25
+SWITCH_GYROZ            26
+SWITCH_CAPTURE          27
+*/
+
+uint16 NormalWait = 50;
+uint16 ScreenWait = 500;
+uint16 ShortScreenWait = 500;
+
+combo MaxMoney {
+	//call(GoToAbilityMenuFromJunction);
+	call(BuyCottage);
+	call(ModToMegaPotion);
+	call(SellMegaPotion);
+	wait(1000);
+}
+
+combo GoToAbilityMenuFromJunction {
+	// Starting from junction main menu
+	// Go to Ability Menu
+	// down 5
+	call(down);
+	call(down);
+	call(down);
+	call(down);
+	call(down);
+
+	// Enter ability Menu
+ 	// a
+ 	call(a);
+}
+
+combo GoToCallShopFromAbility {
+	// Go to Call Shop Menu
+ 	// down 3
+ 	call(down);
+ 	call(down);
+ 	call(down);
+	
+
+}
+
+combo BuyCottage {
+	//// Must start from the ability menu with cursor hovered over call shop
+	//// Must also have selected estar shop!!! previously
+	
+	// Enter Call Shop
+ 	// a
+ 	call(a);
+	wait (ScreenWait);
+	// Go to Ester !!! shop
+ 	// up 2
+	//call(up);
+	//call(up);
+	
+	// A
+	call(a);
+	wait (ScreenWait);
+	
+	// Click buy button
+	// A
+	call(a);
+	wait (ScreenWait);
+	// Go to cottage item
+	// Right
+	call(right);
+	wait (ScreenWait);
+	// Up 2
+	call(up);
+	call(up);
+	
+	// buy 100
+	// A 
+	call(a);
+	// up 10
+	call(up);
+	call(up);
+	call(up);
+	call(up);
+	call(up);
+	call(up);
+	call(up);
+	call(up);
+	call(up);
+	call(up);
+	call(up);
+	
+	// A
+	call(a);
+	// exit shop to ability menu
+	// b 3
+	call(b);
+	wait(ScreenWait);
+
+
+	call(ExitShop);
+}
+
+combo ExitShop {
+	call(b);
+	wait(ScreenWait);
+	call(b);
+	wait(ScreenWait);
+}
+
+combo ModToMegaPotion {
+	//Starting from Call Shop Menu
+	
+	// Go to Recovery Med Refine menu
+	call(right);
+	wait(ScreenWait);
+	call(up);
+	call(a);
+	wait(ScreenWait);
+	wait(ScreenWait);
+	
+	// Refine 100 Cottages
+	call(a);
+	call(down);
+	call(down);
+	call(down);
+	call(down);
+	call(down);
+	call(down);
+	call(a);
+	
+	// exit menu
+	call(b);
+	wait(ScreenWait);
+	
+	// Go back to Call Shop Menu
+	call(left);
+	wait(ShortScreenWait);
+	call(down);
+
+}
+
+combo SellMegaPotion {
+	// Starting From Call Shop Menu
+	// With Estar one selected
+	
+	// enter shop
+	call(a);
+	wait(ScreenWait);
+	call(a);
+	wait(ScreenWait);
+	
+	
+	// go to sell
+	call(right);
+	call(a);
+	wait(ScreenWait);
+	
+	// sell 100 mega potions in position 2 of item list
+	call(down);
+	call(a);
+	wait(ScreenWait);
+	call(up);
+	call(up);
+	call(up);
+	call(up);
+	call(up);
+	call(a);
+	
+	// exit
+	call(b);
+	wait(ScreenWait);
+	call(ExitShop);
+}
+
+combo down {
+	set_val(DOWN, 100.0);
+	wait (NormalWait);
+	set_val(DOWN, 0.00);
+	wait (NormalWait);
+}
+
+combo up {
+	set_val(UP, 100.0);
+	wait (NormalWait);
+	set_val(UP, 0.00);
+	wait (NormalWait);
+}
+
+combo right {
+	set_val(RIGHT, 100.0);
+	wait (NormalWait);
+	set_val(RIGHT, 0.00);
+	wait (NormalWait);
+}
+
+combo left {
+	set_val(LEFT, 100.0);
+	wait (NormalWait);
+	set_val(LEFT, 0.00);
+	wait (NormalWait);
+}
+
+combo a {
+	set_val(A, 100.0);
+	wait (NormalWait);
+	set_val(A, 0.00);
+	wait (NormalWait);
+}
+
+combo b {
+	set_val(B, 100.0);
+	wait (NormalWait);
+	set_val(B, 0.00);
+	wait (NormalWait);
+}
+
+combo ModCottageToMegaPotion {
+	// Starting from Call shop on ability menu
+	
+	// Go to Recov Medicine Refine Ability
+	// Right
+	// Up
+}
+//-------------------------------------------------------------------------------------------
+// MACRO LOOPER
+//-------------------------------------------------------------------------------------------
+ 
+bool RunMacroRun;
+uint8 RumbleStrength = 60;  // Set to 0 to disable rumble
+uint16 RumbleLength = 250; // Tweak to increase / decrease rumble length
+uint8 i = 0;
+uint8 MaxRuns = 2;
+
+main {
+    // hold LT and tap RT to start the macro. Do the same to stop the macro.
+    if (get_val (BUTTON_2) && event_active (BUTTON_3)) 
+        { RunMacroRun=!RunMacroRun; 
+            if (RunMacroRun) { combo_run (Rumble); ColorLED('A'); i = 0; }
+            else if (!RunMacroRun) { combo_run (DoubleRumble); ColorLED('B'); i = MaxRuns; }
+        }
+ 
+    if (RunMacroRun) { 
+		combo_run(MaxMoney);
+		// stopping after one execution for now
+		//RunMacroRun = !RunMacroRun;
+		} 
+    else if (!RunMacroRun) { combo_stop(MaxMoney); }
+ 
+} // main
+ 
+combo Rumble {
+    ffb_set(FFB_1, (fix32) RumbleStrength, 180);
+    wait(0); wait(RumbleLength);
+    ffb_set(FFB_1, 0.0, 180);
+    wait(0); wait(RumbleLength);
+}
+ 
+combo DoubleRumble {
+    call (Rumble);
+    call (Rumble);
+}
+ 
+void ColorLED(char Color) {
+    fix32 Color1, Color2, Color3, Color4;
+ 
+    if(Color == 'B') {Color1 = 100.0;   Color2 = 0.00;    Color3 = 0.00;    Color4 = 0.00;}
+    if(Color == 'R') {Color1 = 0.00;    Color2 = 100.0;   Color3 = 0.00;    Color4 = 0.00;}
+    if(Color == 'G') {Color1 = 0.00;    Color2 = 0.00;    Color3 = 100.0;   Color4 = 0.00;}
+    if(Color == 'P') {Color1 = 0.00;    Color2 = 0.00;    Color3 = 0.00;    Color4 = 100.0;}
+    if(Color == 'C') {Color1 = 100.0;   Color2 = 0.00;    Color3 = 100.0;   Color4 = 0.00;}
+    if(Color == 'A') {Color1 = 0.00;    Color2 = 100.0;   Color3 = 100.0;   Color4 = 0.00;}
+    if(Color == 'W') {Color1 = 100.0;   Color2 = 100.0;   Color3 = 100.0;   Color4 = 100.0;}
+ 
+    led_set(LED_1, Color1, 0);
+    led_set(LED_2, Color2, 0);
+    led_set(LED_3, Color3, 0);
+    led_set(LED_4, Color4, 0);
+ 
+    return;
+}

@@ -1,0 +1,54 @@
+#pragma METAINFO("Run_get_Dagger.gpc", 1, 0, "antithesis")
+ 
+//-------------------------------------------------------------------------------------------
+// MACRO LOOPER
+//-------------------------------------------------------------------------------------------
+ 
+bool RunMacroRun;
+uint8 RumbleStrength = 60;  // Set to 0 to disable rumble
+uint16 RumbleLength = 250; // Tweak to increase / decrease rumble length
+ 
+main {
+    // hold LT and tap RT to start the macro. Do the same to stop the macro.
+    if (get_val (BUTTON_6) && event_active (BUTTON_9)) 
+        { RunMacroRun=!RunMacroRun; 
+            if (RunMacroRun) { combo_run (Rumble); ColorLED('A'); }
+            else if (!RunMacroRun) { combo_run (DoubleRumble); ColorLED('B'); }
+        }
+ 
+    if (RunMacroRun) { macro_run("dagger.gmk"); } 
+    else if (!RunMacroRun) { macro_stop(); }
+ 
+} // main
+ 
+combo Rumble {
+    ffb_set(FFB_1, (fix32) RumbleStrength, 180);
+    wait(0); wait(RumbleLength);
+    ffb_set(FFB_1, 0.0, 180);
+    wait(0); wait(RumbleLength);
+}
+ 
+combo DoubleRumble {
+    call (Rumble);
+    call (Rumble);
+}
+ 
+void ColorLED(char Color) {
+    fix32 Color1, Color2, Color3, Color4;
+ 
+    if(Color == 'B') {Color1 = 100.0;   Color2 = 0.00;    Color3 = 0.00;    Color4 = 0.00;}
+    if(Color == 'R') {Color1 = 0.00;    Color2 = 100.0;   Color3 = 0.00;    Color4 = 0.00;}
+    if(Color == 'G') {Color1 = 0.00;    Color2 = 0.00;    Color3 = 100.0;   Color4 = 0.00;}
+    if(Color == 'P') {Color1 = 0.00;    Color2 = 0.00;    Color3 = 0.00;    Color4 = 100.0;}
+    if(Color == 'C') {Color1 = 100.0;   Color2 = 0.00;    Color3 = 100.0;   Color4 = 0.00;}
+    if(Color == 'A') {Color1 = 0.00;    Color2 = 100.0;   Color3 = 100.0;   Color4 = 0.00;}
+    if(Color == 'W') {Color1 = 100.0;   Color2 = 100.0;   Color3 = 100.0;   Color4 = 100.0;}
+ 
+    led_set(LED_1, Color1, 0);
+    led_set(LED_2, Color2, 0);
+    led_set(LED_3, Color3, 0);
+    led_set(LED_4, Color4, 0);
+ 
+    return;
+}
+ 
