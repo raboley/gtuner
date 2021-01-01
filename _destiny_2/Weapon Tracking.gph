@@ -1,0 +1,88 @@
+
+init { 
+	weaponFlags[0] = TRUE;
+	weaponFlags[1] = FALSE;
+	weaponFlags[2] = FALSE;
+	
+	weaponSwap(1);
+}
+
+main {
+	if(event_release(BUTTON_14) && time_active(BUTTON_14) < 250 && !setRPM) {
+		if(weaponFlags[0] == TRUE) {
+			weaponFlags[1] = TRUE;
+			weaponFlags[0] = FALSE;
+			weaponSwap(2);
+		} else if(weaponFlags[1] == TRUE) {
+			weaponFlags[0] = TRUE;
+			weaponFlags[1] = FALSE;
+			weaponSwap(1);
+		} else if(weaponFlags[2] == TRUE) {
+			weaponFlags[0] = TRUE;
+			weaponFlags[2] = FALSE;
+			weaponSwap(1);
+		}
+	} else if(event_release(BUTTON_14) && time_active(BUTTON_14) >= 250 && !setRPM) {
+		if(weaponFlags[0] == TRUE) {
+			weaponFlags[0] = FALSE;
+			weaponFlags[2] = TRUE;
+			weaponSwap(3);
+		} else if(weaponFlags[1] == TRUE) {
+			weaponFlags[1] = FALSE;
+			weaponFlags[2] = TRUE;
+			weaponSwap(3);
+		}
+	}
+	
+// -------------------------------------------------------------------------- //
+// |     Reset Weapon Tracking to Kinetic (Primary) - Double Tap Reload    	| //
+// -------------------------------------------------------------------------- //
+	if(event_active(BUTTON_6) && time_release(BUTTON_6) < 250) {
+		weaponSwap(1);
+		weaponFlags[0] = TRUE;
+		weaponFlags[1] = FALSE;
+		weaponFlags[2] = FALSE;
+	}
+// ========================================================================== //
+}
+
+void weaponSwap(int weaponTo) {
+	if(weaponTo == 1) {
+		ColorLED('W');
+		RapidReloadDelay = KineticRapidReloadDelay;
+		rpm = (int)KineticShotPerMin;
+		AntiRecoilV = KineticAntiRecoilV;
+		AntiRecoilH = KineticAntiRecoilH;
+	} else if(weaponTo == 2) {
+		ColorLED('G');
+		RapidReloadDelay = EnergyRapidReloadDelay;
+		rpm = (int)EnergyShotPerMin;
+		AntiRecoilV = EnergyAntiRecoilV;
+		AntiRecoilH = EnergyAntiRecoilH;
+	} else if(weaponTo == 3) {
+		ColorLED('P');
+		RapidReloadDelay = PowerRapidReloadDelay;
+		rpm = (int)PowerShotPerMin;
+		AntiRecoilV = PowerAntiRecoilV;
+		AntiRecoilH = PowerAntiRecoilH;
+	}
+}
+
+void ColorLED(char Color) {
+	fix32 Color1, Color2, Color3, Color4;
+	
+	if(Color == 'B') {Color1 = 100.0;   Color2 = 0.00;    Color3 = 0.00;    Color4 = 0.00;}
+	if(Color == 'R') {Color1 = 0.00;    Color2 = 100.0;   Color3 = 0.00;    Color4 = 0.00;}
+	if(Color == 'G') {Color1 = 0.00;    Color2 = 0.00;    Color3 = 100.0;   Color4 = 0.00;}
+	if(Color == 'P') {Color1 = 0.00;    Color2 = 0.00;    Color3 = 0.00;    Color4 = 100.0;}
+	if(Color == 'C') {Color1 = 100.0;   Color2 = 0.00;    Color3 = 100.0;   Color4 = 0.00;}
+	if(Color == 'A') {Color1 = 0.00;    Color2 = 100.0;   Color3 = 100.0;   Color4 = 0.00;}
+	if(Color == 'W') {Color1 = 100.0;   Color2 = 100.0;   Color3 = 100.0;   Color4 = 100.0;}
+
+	led_set(LED_1, Color1, 0);
+	led_set(LED_2, Color2, 0);
+	led_set(LED_3, Color3, 0);
+	led_set(LED_4, Color4, 0);
+	
+	return;
+}

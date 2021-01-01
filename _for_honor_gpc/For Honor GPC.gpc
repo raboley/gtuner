@@ -1,0 +1,1010 @@
+#pragma METAINFO("For Honor Combat Pack GPC EDITION", 1, 0, "pablogroup")
+
+#include <ps4.gph> // XB1 players, do not worry about this header file - this script supports all platforms. 
+#include <extendeddisplaydot.gph>
+
+
+// INPUT INITIALIZATION
+//
+// ----------------------------------------------------------------------------------------------------------------
+
+#define MOV_Y_AXIS                        PS4_LY
+#define MOV_X_AXIS                        PS4_LX
+#define MOV_RY_AXIS                       PS4_RY
+#define MOV_RX_AXIS                       PS4_RX
+#define QUICKCHAT                         PS4_L1
+#define LOCKON                            PS4_L2
+#define SPRINT                            PS4_L3
+#define RESET_CAMERA                      PS4_R3
+#define LIGHT                             PS4_R1
+#define HEAVY                             PS4_R2
+#define EMOTE                             PS4_TRIANGLE
+#define GUARDBREAK                        PS4_SQUARE
+#define CANCEL_HEAVY                      PS4_CIRCLE
+#define DODGE                             PS4_CROSS
+#define OPTIONS                           PS4_OPTIONS
+#define SHARE                             PS4_SHARE
+#define TOUCHPAD                          PS4_TOUCH
+#define HOME                              PS4_PS
+
+
+// VARIABLES
+//
+// ----------------------------------------------------------------------------------------------------------------
+
+uint32  display_timeout;
+uint8   statusInA, protocolInA, deviceInA;
+uint8   statusInB, protocolInB, deviceInB;
+uint8   statusOut, protocolOut, deviceOut;
+bool    arcade_stick_switch             = FALSE;
+bool    menu_flag                       = FALSE;
+bool    lockon_flag                     = FALSE;
+bool    quick_access_switch             = FALSE;
+bool    quick_access_flag               = FALSE;
+int     guardbreak_wait                 = 1300; // Should probably create a UI for this one day.
+bool    auto_light_attack_switch        = FALSE;
+int     auto_light_attack_release_wait  = 0;
+bool    auto_heavy_attack_switch        = FALSE;
+int     auto_heavy_attack_release_wait  = 0;
+bool    auto_mix_up_switch              = FALSE;
+bool    auto_mix_up_attack_type         = FALSE;
+fix32   next_random_guard_direction;
+int     guard_light_wait                = 100;
+int     guard_heavy_wait                = 300;
+bool    easy_attack_switch              = FALSE;
+int     easy_attack_hold_time           = 250;
+bool    easy_attack_option              = FALSE;
+bool    easy_feint_switch               = !FALSE;
+bool    flick_switch_targets_flag       = FALSE;
+bool    alt_cancel_heavy_switch         = FALSE;
+bool    alt_revenge_switch              = FALSE;
+#define TRUE                              !FALSE
+ 
+
+// INIT
+//
+// ----------------------------------------------------------------------------------------------------------------
+
+init {
+	pmem_load();	
+	pmem_read(2, &arcade_stick_switch);
+	pmem_read(3, &quick_access_switch);
+	pmem_read(4, &quick_access_flag);
+	pmem_read(5, &auto_light_attack_switch);
+	pmem_read(6, &auto_light_attack_release_wait);
+	pmem_read(10, &auto_heavy_attack_switch);
+	pmem_read(11, &auto_heavy_attack_release_wait);
+	pmem_read(15, &auto_mix_up_switch);
+	pmem_read(16, &auto_mix_up_attack_type);
+	pmem_read(18, &guard_light_wait);
+	pmem_read(20, &guard_heavy_wait);
+	pmem_read(22, &easy_attack_switch);
+	pmem_read(23, &easy_attack_hold_time);
+	pmem_read(25, &easy_attack_option);
+	pmem_read(26, &easy_feint_switch);
+	pmem_read(27, &alt_cancel_heavy_switch);
+	pmem_read(28, &alt_revenge_switch);
+}
+
+
+// INIT
+//
+// ----------------------------------------------------------------------------------------------------------------
+
+init {
+	display_timeout = system_time();
+}
+
+
+// THE MAIN SCRIPT
+//
+// ----------------------------------------------------------------------------------------------------------------
+
+main {
+	
+    // MENU NAVIGATION
+	// 
+	// More information here: http://www.consoletuner.com/forum/viewtopic.php?f=26&t=5662&start=60#p42824
+    // ----------------------------------------------------------------------------------------------------------------
+	
+	if(event_active(OPTIONS) || event_active(HOME) || (event_active(SHARE) && (protocolInA != PROTOCOL_XB1) && (protocolInB != PROTOCOL_XB1) && (protocolOut == PROTOCOL_PS4))) {
+		menu_flag = TRUE;
+	}
+	
+    if((get_val(MOV_Y_AXIS) <= -30.00 || get_val(MOV_Y_AXIS) >= 30.00 || 
+    get_val(MOV_X_AXIS) <= -30.00 || get_val(MOV_X_AXIS) >= 30.00) &&
+	(get_val(MOV_RY_AXIS) <= -30.00 || get_val(MOV_RY_AXIS) >= 30.00 || 
+    get_val(MOV_RX_AXIS) <= -30.00 || get_val(MOV_RX_AXIS) >= 30.00)) {
+        menu_flag = FALSE;
+    }
+	
+	if((get_val(MOV_Y_AXIS) <= -50.00 || get_val(MOV_Y_AXIS) >= 50.00 || 
+    get_val(MOV_X_AXIS) <= -50.00 || get_val(MOV_X_AXIS) >= 50.00) &&
+	(event_active(SPRINT) || event_active(DODGE) || event_active(LIGHT) || event_active(HEAVY))) {
+        menu_flag = FALSE;
+    }
+	
+	if((get_val(MOV_Y_AXIS) <= -20.00 || get_val(MOV_Y_AXIS) >= 20.00 || 
+    get_val(MOV_X_AXIS) <= -20.00 || get_val(MOV_X_AXIS) >= 20.00) &&
+	(event_active(LOCKON))) {
+		menu_flag = FALSE;
+		if(menu_flag) {
+			lockon_flag = TRUE;
+		}
+    }	
+	
+	if(get_val(LOCKON)) {
+		if(get_val(MOV_Y_AXIS) <= -30.00 || get_val(MOV_Y_AXIS) >= 30.00 || 
+		get_val(MOV_X_AXIS) <= -30.00 || get_val(MOV_X_AXIS) >= 30.00) {
+			if(menu_flag) {
+				menu_flag = FALSE;
+				lockon_flag = TRUE;
+			}
+		}	
+	}
+	
+	if(event_active(LOCKON) && time_release(LOCKON) < 150) {
+		menu_flag = FALSE;
+		if(menu_flag) {
+			lockon_flag = TRUE;
+		}
+	}
+
+
+    // AUTOMATIC XBOX ONE CONTROLLER SUPPORT ON PS4
+	// 
+    // When using an Xbox One controller on a PS4, this script allows you to access the 
+	// Touchpad by pressing the View button.
+    // To access the PS share menu, you simply double tap the Home button instead. 
+	// This is only needed if you are using an Xbox One controller on a PS4, NOT an Xbox 
+	// One controller on an Xbox One.
+	// The beauty of this script is that it doesn't matter which port you have the Xbox One 
+	// controller plugged into - it automatically detects that you have one plugged in.
+    // This is also compatible with the Xbox One Elite controller.
+    // Note that if you would like to revert back to the standard PS4 controller, make sure 
+	// you unplug the Xbox One controller first, otherwise the Share button will still be 
+	// mapped to the Touchpad.
+    // ----------------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------------------
+
+	statusInA = port_status(PORT_USB_A, &protocolInA, &deviceInA);
+	statusInB = port_status(PORT_USB_B, &protocolInB, &deviceInB);
+	statusOut = port_status(PORT_USB_C, &protocolOut, &deviceOut);
+    if(((protocolInA == PROTOCOL_XB1) || (protocolInB == PROTOCOL_XB1)) && (protocolOut == PROTOCOL_PS4)) { 
+        if(get_val(PS4_SHARE)) {
+            set_val(PS4_SHARE, 0);
+            set_val(PS4_TOUCH, 100);
+        }
+		if(event_active(HOME) && time_release(HOME) < 150) {
+			combo_run(HomeBlock);
+			combo_run(ShareButtonShortcut); 
+		}
+    }
+	
+
+    // EASY SPRINT
+	// 
+    // Supports full 360 degree movement.
+    // ----------------------------------------------------------------------------------------------------------------
+	
+	if(!lockon_flag && !menu_flag) {
+		if((get_val(MOV_Y_AXIS) <= -70.00 || get_val(MOV_Y_AXIS) >= 70.00 || 
+		get_val(MOV_X_AXIS) <= -70.00 || get_val(MOV_X_AXIS) >= 70.00)) {
+			combo_run(EasySprint);
+		}
+	}
+	
+	
+    // VIRTUAL LOCKON
+    //
+	// Functionally speaking, Virtual Lockon is identical to the in-game option "Lock Toggle". However 
+	// DO NOT enable this feature in the game settings (leave this as the default). I need to handle 
+	// toggle lockon programmatically so that I have a flag that I can use for the "Quick Guard" feature. 
+    // ----------------------------------------------------------------------------------------------------------------
+	
+	if(event_active(LOCKON)) {
+		if(menu_flag) {
+			lockon_flag = FALSE;
+		} else {
+			lockon_flag = !lockon_flag;
+		}
+		if(lockon_flag) {
+			// combo_run(GuardModeRumble);
+		}
+		if(!lockon_flag) {
+			// combo_run(FreeRoamModeRumble);
+		}
+	}
+	
+	if(lockon_flag) {
+		set_val(LOCKON, 100);
+		// This recreates the ability to switch targets by pressing R3 / RS, just like the in-game
+		// "Lock Toggle" option.
+		if(event_active(RESET_CAMERA)) {
+			combo_run(SwitchTargets);
+		}
+	}
+	
+	// This allows you to break out of Virtual Lockon by pressing the Sprint button (L3 / LS), and this
+	// also prevents Virtual Lockon from activating in the menus.
+	if(event_active(SPRINT) || event_active(OPTIONS) || event_active(HOME) || (event_active(SHARE) && (protocolInA != PROTOCOL_XB1) && (protocolInB != PROTOCOL_XB1) && (protocolOut == PROTOCOL_PS4))) {
+		lockon_flag = FALSE;
+	}
+	
+	
+    // QUICK ACCESS
+    //
+    // ----------------------------------------------------------------------------------------------------------------
+	if(quick_access_switch || easy_feint_switch) {
+		if(lockon_flag) {
+			if(get_val(QUICKCHAT)) {
+				inhibit(QUICKCHAT, guardbreak_wait);
+				if(quick_access_flag == 0) {
+					if(getLastButtonPressed() == HEAVY) {
+						// Tap the Guardbreak button immediately after a heavy attack to perform a feint.
+						combo_run(FeintGuardbreakChain);
+					} else {
+						combo_run(GuardbreakForce);
+					}
+				} else {
+					combo_run(CancelHeavyAttackForce);
+				}
+			}
+		}
+	}
+
+
+    // AUTO-ATTACK (LIGHT)
+    //
+    // ----------------------------------------------------------------------------------------------------------------
+	
+	if(auto_light_attack_switch) {
+		if(get_val(LIGHT) && !menu_flag) {
+			// This prevents Auto Attack from activating while you are using the QuickChat system.
+			if(!get_val(QUICKCHAT)) {
+				combo_run(AutoLightAttack);
+			}
+		}
+	}
+	
+	
+    // AUTO-ATTACK (HEAVY)
+    //
+    // ----------------------------------------------------------------------------------------------------------------
+
+	if(auto_heavy_attack_switch) {
+		if(get_val(HEAVY) && !menu_flag) {
+			// This prevents Auto Attack from activating while you are using the QuickChat system.
+			if(!get_val(QUICKCHAT)) {
+				combo_run(AutoHeavyAttack);
+			}
+		}
+	}
+
+
+    // AUTO MIX-UP
+    // 
+    // This randomly switches guard direction after an attack.
+    // ----------------------------------------------------------------------------------------------------------------	
+	
+	if(lockon_flag) {
+		if(auto_mix_up_switch) {
+			if(auto_mix_up_attack_type == 0) {
+				if(event_release(LIGHT) && !get_val(EMOTE) && !get_val(GUARDBREAK) && !get_val(CANCEL_HEAVY)) {
+					next_random_guard_direction = round(2.00 * rand());
+					if(next_random_guard_direction == 0.00) {
+						combo_run(GuardUpLightForce);
+					} else if(next_random_guard_direction == 1.00) {
+						combo_run(GuardLeftLightForce);
+					} else if(next_random_guard_direction == 2.00) {
+						combo_run(GuardRightLightForce);
+					}
+				}
+			} else if(auto_mix_up_attack_type == 1) {
+				if((event_release(LIGHT) || event_release(HEAVY)) && !get_val(EMOTE) && !get_val(GUARDBREAK) && !get_val(CANCEL_HEAVY)) {
+					next_random_guard_direction = round(2.00 * rand());
+					if(next_random_guard_direction == 0.00) {
+						combo_run(GuardUpHeavyForce);
+					} else if(next_random_guard_direction == 1.00) {
+						combo_run(GuardLeftHeavyForce);
+					} else if(next_random_guard_direction == 2.00) {
+						combo_run(GuardRightHeavyForce);
+					}
+				}
+			}
+		}
+	}
+
+
+    // ALT CANCEL HEAVY OPTION #1
+    //
+    // ----------------------------------------------------------------------------------------------------------------
+	
+	if((alt_cancel_heavy_switch || easy_feint_switch) && !menu_flag) {
+		if(!EasyFeintUp && !EasyFeintLeft && !EasyFeintRight) {
+			if(lockon_flag) {
+				if(get_val(MOV_Y_AXIS) > 90.00) {
+					combo_run(AltCancelHeavy);
+				}
+			}
+			if(!lockon_flag) {
+				// I have relaxed the pressure required to trigger revives when in free roam mode.
+				if(get_val(MOV_Y_AXIS) > 50.00) {
+					combo_run(AltCancelHeavy);
+				}
+			}
+		}
+	}
+
+    // ALT CANCEL HEAVY OPTION #2
+    //
+	// Tap the Dodge button immediately after a heavy attack to perform a feint.
+    // ----------------------------------------------------------------------------------------------------------------
+
+	if(alt_cancel_heavy_switch && lockon_flag && !menu_flag) {
+		if(!EasyFeintUp && !EasyFeintLeft && !EasyFeintRight) {
+			if(get_val(DODGE)) {
+				if(getLastButtonPressed() == HEAVY) {
+					combo_run(FeintDodgeChain);
+				}
+			}
+		}
+	}
+
+	
+    // QUICK GUARD, EASY FEINT & EASY ATTACK
+    //
+    // ----------------------------------------------------------------------------------------------------------------
+
+	if(lockon_flag || arcade_stick_switch) {
+		
+		// The following three blocks of code are designed to swap the face buttons with the right stick.
+		if(get_val(EMOTE)) {
+			set_val(EMOTE, 0);
+			set_val(MOV_RY_AXIS, -100);
+			
+			// Easy Attack feature.
+			if(time_active(EMOTE) > easy_attack_hold_time && easy_attack_switch && !arcade_stick_switch) {
+				if(easy_attack_option == 0) {
+					// combo_run(EasyLightAttack); 
+					// Use the EasyLightAttack combo instead if you would like the light attack to trigger only once 
+					// (comment out "AutoLightAttack" as you don't want both combos running at the same time). 
+					combo_run(AutoLightAttack); 
+				} else {
+					combo_run(AutoHeavyAttack);
+				}
+			}
+		} else {
+			if(get_val(MOV_RY_AXIS) < -30.00) {
+				if(!easy_feint_switch) {
+					set_val(MOV_RY_AXIS, 0);
+					set_val(EMOTE, 100);
+				} else {
+					combo_run(EasyFeintUp);
+				}
+			}
+		}
+		
+		if(get_val(GUARDBREAK)) {
+			set_val(GUARDBREAK, 0);
+			set_val(MOV_RX_AXIS, -100);
+			
+			// Easy Attack feature.
+			if(time_active(GUARDBREAK) > easy_attack_hold_time && easy_attack_switch && !arcade_stick_switch) {
+				if(easy_attack_option == 0) {
+					// combo_run(EasyLightAttack);
+					// Use the EasyLightAttack combo instead if you would like the light attack to trigger only once 
+					// (comment out "AutoLightAttack" as you don't want both combos running at the same time). 
+					combo_run(AutoLightAttack); 
+				} else {
+					combo_run(AutoHeavyAttack);
+				}
+			}
+		} else {
+			if(get_val(MOV_RX_AXIS) < -30.00) {
+				if(!easy_feint_switch) {
+					if(flick_switch_targets_flag) {
+						combo_run(SwitchTargets);
+					} else {
+						set_val(MOV_RX_AXIS, 0);
+						set_val(GUARDBREAK, 100);
+					}
+				} else {
+					combo_run(EasyFeintLeft);
+				}
+			}
+		}
+		
+		if(get_val(CANCEL_HEAVY)) {
+			set_val(CANCEL_HEAVY, 0);
+			set_val(MOV_RX_AXIS, 100);
+			
+			// Easy Attack feature.
+			if(time_active(CANCEL_HEAVY) > easy_attack_hold_time && easy_attack_switch && !arcade_stick_switch) {
+				if(easy_attack_option == 0) {
+					// combo_run(EasyLightAttack);
+					// Use the EasyLightAttack combo instead if you would like the light attack to trigger only once 
+					// (comment out "AutoLightAttack" as you don't want both combos running at the same time). 
+					combo_run(AutoLightAttack); 
+				} else {
+					combo_run(AutoHeavyAttack);
+				}
+			}
+		} else {
+			if(get_val(MOV_RX_AXIS) > 30.00) {
+				if(!easy_feint_switch) {
+					set_val(MOV_RX_AXIS, 0);
+					set_val(CANCEL_HEAVY, 100);
+				} else {
+					combo_run(EasyFeintRight);
+				}
+			}
+		}
+		
+		// This is to create a deadzone to prevent interference between the analogue 
+		// movement and the remapped buttons.
+		if(get_val(MOV_RY_AXIS) < 0.00 && get_val(MOV_RY_AXIS) >= -30.00) {
+			set_val(MOV_RY_AXIS, 0);
+		}
+		if(get_val(MOV_RX_AXIS) < 0.00 && get_val(MOV_RX_AXIS) >= -30.00) {
+			set_val(MOV_RX_AXIS, 0);
+		}
+		if(get_val(MOV_RX_AXIS) > 0.00 && get_val(MOV_RX_AXIS) <= 30.00) {
+			set_val(MOV_RX_AXIS, 0);
+		}
+		if(get_val(MOV_RY_AXIS) > 0.00 && get_val(MOV_RY_AXIS) <= 30.00) {
+			set_val(MOV_RY_AXIS, 0);
+		}
+	}
+
+	
+    // ALT REVENGE OPTION
+    //
+	// Double tap the Dodge button to activate Revenge Mode.
+    // ---------------------------------------------------------------------------------------------------------------- 
+	
+	if((alt_revenge_switch || easy_feint_switch || arcade_stick_switch) && !menu_flag) {
+		if(event_active(DODGE) && time_release(DODGE) < 150) {
+			combo_run(EmoteForce);
+		}
+	}
+	
+
+    // ALT FINISHER OPTION
+    //
+    // ---------------------------------------------------------------------------------------------------------------- 
+
+	if(event_active(LOCKON) && !lockon_flag && !menu_flag) {
+		combo_run(EmoteForce);
+	}
+	
+	
+    // ALT REVIVE OPTION
+    //
+    // ---------------------------------------------------------------------------------------------------------------- 
+	
+	if(get_val(SPRINT) && !menu_flag) {
+		set_val(CANCEL_HEAVY, 100);
+	}
+	
+	
+    // GENERIC ARCADE / FIGHTING STICK SUPPORT
+    //
+	// Some arcade sticks simultaneously activate the dpad in order to increase compatibility. This causes
+	// problems in a lot of games and menus as it results in a double click.
+    // ----------------------------------------------------------------------------------------------------------------
+	
+	if(arcade_stick_switch) {
+		if(is_active(STICK_2_X) || is_active(STICK_2_Y)) {
+			set_val(BUTTON_12, 0.0);
+			set_val(BUTTON_13, 0.0);
+			set_val(BUTTON_10, 0.0);
+			set_val(BUTTON_11, 0.0);
+		}
+	}
+	
+	
+    // ARCADE / FIGHTING STICK SPECIFIC OPTIONS
+    //
+    // ----------------------------------------------------------------------------------------------------------------	
+	
+	// This allows you to double tap the Options button to toggle between Stick and standard Controller modes.
+	if(event_active(OPTIONS) && time_release(OPTIONS) < 150) {
+		arcade_stick_switch = !arcade_stick_switch;
+	}
+	
+	if(!arcade_stick_switch) {
+		combo_run(DisplayControllerMode);
+	}
+	if(arcade_stick_switch) {
+		combo_run(DisplayStickMode);
+	}
+	
+	// This centres the camera when dodging.
+	if(get_val(DODGE) && !lockon_flag && arcade_stick_switch && !menu_flag) {
+		combo_run(DelayedDodge);
+	}
+	
+	// Further arcade stick support (due to the limited button count).
+	// Also - buttons 2 and 8 need to be swapped in the Input Translator.
+	if(arcade_stick_switch) {
+		if(get_val(SHARE)) {
+			set_val(SHARE, 0);
+			set_val(MOV_RY_AXIS, 100);
+		}
+		if(event_active(SHARE) && time_release(SHARE) < 150) {
+			set_val(MOV_RY_AXIS, 0);
+			combo_run(ShareButtonShortcut); 
+		} 
+	}
+	
+
+    // TITAN TWO AUTO-ACTION LED NOTIFICATIONS
+    //
+	// Double tap the Options button to toggle between Stick and standard Controller modes. This is useful for 
+	// navigating through menus. While in Stick mode, an "S." will be displayed on the LCD screen, and while in
+    // Controller mode, you will see a "C." instead.
+    // ----------------------------------------------------------------------------------------------------------------   
+	
+    if(lockon_flag) {
+		ColorLED('P');
+	} else if(!lockon_flag && !menu_flag) {
+		ColorLED('G');
+    } else if(menu_flag && !lockon_flag) {
+		ColorLED('W');
+	}
+}
+
+
+// COMBOS
+//
+// ----------------------------------------------------------------------------------------------------------------
+
+combo EasySprint {
+    set_val(SPRINT, 100);
+	wait(40);
+	wait(40);
+}
+
+combo SwitchTargets {
+	lockon_flag = FALSE;
+	wait(100);
+	lockon_flag = TRUE;
+}
+
+combo AutoLightAttack {
+	set_val(LIGHT, 100);
+	wait(40);
+	set_val(LIGHT, 0);
+	wait(auto_light_attack_release_wait);
+}
+
+combo AutoHeavyAttack {
+	set_val(HEAVY, 100);
+	wait(40);
+	set_val(HEAVY, 0);
+	wait(auto_heavy_attack_release_wait);
+}
+
+/* combo EasyLightAttack {
+	set_val(LIGHT, 100);
+	wait(300);
+} */
+
+combo GuardbreakForce {
+	set_val(GUARDBREAK, 100);
+}
+
+combo FeintGuardbreakChain {
+	set_val(CANCEL_HEAVY, 100);
+	wait(40);
+	set_val(CANCEL_HEAVY, 0);
+	wait(200);
+	set_val(GUARDBREAK, 100);
+	wait(40);
+}
+
+combo CancelHeavyAttackForce {
+	set_val(CANCEL_HEAVY, 100);
+	wait(40);
+	wait(40);
+}
+
+combo AltCancelHeavy {
+	set_val(CANCEL_HEAVY, 100);
+}
+
+combo FeintDodgeChain {
+	set_val(CANCEL_HEAVY, 100);
+	wait(40);
+	set_val(CANCEL_HEAVY, 0);
+	wait(200);
+	set_val(DODGE, 100);
+	wait(40);
+}
+
+combo EasyFeintUp {
+	set_val(MOV_RY_AXIS, -50);
+	wait(40);
+	set_val(HEAVY, 100);
+	wait(40);
+	set_val(CANCEL_HEAVY, 100);
+	wait(40);
+}
+
+combo EasyFeintLeft {
+	set_val(MOV_RX_AXIS, -50);
+	wait(40);
+	set_val(HEAVY, 100);
+	wait(40);
+	set_val(CANCEL_HEAVY, 100);
+	wait(40);
+}
+
+combo EasyFeintRight {
+	set_val(MOV_RX_AXIS, 50);
+	wait(40);
+	set_val(HEAVY, 100);
+	wait(40);
+	set_val(CANCEL_HEAVY, 100);
+	wait(40);
+}
+
+combo EmoteForce {
+	set_val(EMOTE, 100);
+	wait(40);
+}
+
+combo GuardUpLightForce {
+	wait(guard_light_wait);
+	set_val(MOV_RY_AXIS, -100);
+	wait(40);
+}
+
+
+combo GuardLeftLightForce {
+	wait(guard_light_wait);
+	set_val(MOV_RX_AXIS, -100);
+	wait(40);
+}
+
+
+combo GuardRightLightForce {
+	wait(guard_light_wait);
+	set_val(MOV_RX_AXIS, 100);
+	wait(40);
+}
+
+combo GuardUpHeavyForce {
+	wait(guard_heavy_wait);
+	set_val(MOV_RY_AXIS, -100);
+	wait(40);
+}
+
+
+combo GuardLeftHeavyForce {
+	wait(guard_heavy_wait);
+	set_val(MOV_RX_AXIS, -100);
+	wait(40);
+}
+
+
+combo GuardRightHeavyForce {
+	wait(guard_heavy_wait);
+	set_val(MOV_RX_AXIS, 100);
+	wait(40);
+}
+
+combo DelayedDodge {
+	set_val(DODGE, 0);
+	wait(40);
+	set_val(RESET_CAMERA, 100);
+	wait(300);
+	set_val(DODGE, 100);
+	wait(40);
+}
+
+combo DisplayControllerMode {
+	my_display_overlay(_CD_, 100);
+}
+
+combo DisplayStickMode {
+	my_display_overlay(_SD_, 100);
+} 
+
+combo RumbleEngine {
+    ffb_set(FFB_1, 100.0, 300);
+}
+ 
+combo GuardModeRumble {
+    wait(100);
+    call(RumbleEngine);
+    wait(500);
+    call(RumbleEngine);
+}
+
+combo FreeRoamModeRumble {
+    wait(100);
+    call(RumbleEngine);
+    wait(500);
+}
+
+combo HomeBlock {
+    set_val(HOME, 0);
+    wait(300);
+}
+
+combo ShareButtonShortcut {
+    set_val(SHARE, 100);
+    wait(40);
+}
+
+
+// FUNCTIONS
+//
+// ----------------------------------------------------------------------------------------------------------------
+
+void my_display_overlay(uint8 mask, uint16 timeout) {
+    if(system_time() - display_timeout > 2000) {
+        display_overlay(mask, timeout);
+    }
+}
+
+uint8 getLastButtonPressed() {
+	uint8 i, last = BUTTON_1;
+	
+	for(i=BUTTON_2; i<=BUTTON_21; ++i) {
+		if(time_release(i) < time_release(last)) {
+			last = i;
+		}
+	}
+	return(last);
+}
+
+void ColorLED(char Color) {
+	fix32 Color1, Color2, Color3, Color4;
+   
+	if(Color == 'B'){Color1 = 100.0;    Color2 = 0.00;    Color3 = 0.00;    Color4 = 0.00;} // Blue
+	if(Color == 'R'){Color1 = 0.00;    Color2 = 100.0;    Color3 = 0.00;    Color4 = 0.00;} // Red
+	if(Color == 'G'){Color1 = 0.00;    Color2 = 0.00;    Color3 = 100.0;    Color4 = 0.00;} // Green
+	if(Color == 'P'){Color1 = 0.00;    Color2 = 0.00;    Color3 = 0.00;    Color4 = 100.0;} // Purple
+	if(Color == 'C'){Color1 = 100.0;    Color2 = 0.00;    Color3 = 100.0;    Color4 = 0.00;} // Cyan
+	if(Color == 'W'){Color1 = 100.0;    Color2 = 100.0;    Color3 = 100.0;    Color4 = 100.0;} // White
+   
+	led_set(LED_1, Color1, 0);
+	led_set(LED_2, Color2, 0);
+	led_set(LED_3, Color3, 0);
+	led_set(LED_4, Color4, 0);
+	
+	return;
+}
+
+
+// INTERACTIVE CONFIGURATOR
+//
+// ----------------------------------------------------------------------------------------------------------------
+
+/* <cfgdesc>
+[WELCOME]
+color		= #0078D7
+shortdesc	= For Honor Combat Pack
+control		= info 
+
+[SPACE 1]
+control		= space
+default		= 25
+
+[Arcade / Fighting Stick Support]
+shortdesc   = Arcade / fighting stick support (you can also toggle to this by double tapping the Options button - the LCD screen will display "S" for "Stick", instead of "C" for "Controller" - this is useful for navigating through menus).
+byteoffset	= 2
+bitsize		= 1
+bitoffset   = 0
+control		= checkbox
+default		= 0
+item		= Enable
+
+[SPACE 2]
+control		= space
+default		= 25
+
+[Quick Access]
+shortdesc   = Choose your custom L1 / LB button assignment (CANNOT be disabled if you have Easy Feint enabled).
+byteoffset	= 3
+bitsize		= 1
+bitoffset   = 0
+control		= checkbox
+default		= 1
+item		= Enable
+
+[Quick Access Button Assignment]
+group       = true
+byteoffset  = 4
+bitsize     = 8
+control     = combobox
+default     = 0
+item        = Guardbreak
+item        = Cancel Heavy Attack
+
+[SPACE 3]
+control		= space
+default		= 25
+
+[Auto Attack (Light)]
+shortdesc   = Hold R1 / RB to perform a repeated light attack.
+byteoffset	= 5
+bitsize		= 1
+bitoffset   = 0
+control		= checkbox
+default		= 1
+item		= Enable
+
+[Auto Attack Release Wait Time (Light)]
+group       = true
+shortdesc   = Every character has different weapon animation speeds, so you may need to adjust the time between light attacks. The default value should be ok for most characters, but you can change this if needed.
+byteoffset  = 6
+bitsize     = 32
+control     = spinboxf
+default     = 40000000
+minimum     = 40000000
+maximum     = 500000000
+step        = 500000
+
+[SPACE 4]
+control		= space
+default		= 25
+
+[Auto Attack (Heavy)]
+shortdesc   = Hold R2 / RT to perform a repeated heavy attack. IMPORTANT: This should be disabled if you use the Conqueror or Shugoki as one of their moves requires you to hold down the trigger.
+byteoffset	= 10
+bitsize		= 1
+bitoffset   = 0
+control		= checkbox
+default		= 1
+item		= Enable
+
+[Auto Attack Release Wait Time (Heavy)]
+group       = true
+shortdesc   = Every character has different weapon animation speeds, so you may need to adjust the time between heavy attacks. The default value should be ok for most characters, but you can change this if needed.
+byteoffset  = 11
+bitsize     = 32
+control     = spinboxf
+default     = 40000000
+minimum     = 40000000
+maximum     = 500000000
+step        = 500000
+
+[SPACE 5]
+control		= space
+default		= 25
+
+[Auto Mix-Up]
+shortdesc   = Randomly change guard direction after each attack. If you want to retain your current guard direction, hold one of the face buttons while performing an attack. Note that Auto Mix-Up will not be activated when using Easy Attack.
+byteoffset	= 15
+bitsize		= 1
+bitoffset   = 0
+control		= checkbox
+default		= 0
+item		= Enable
+
+[Auto Mix-Up Attack Type]
+group       = true
+byteoffset	= 16
+bitsize		= 8
+control		= combobox
+default		= 0
+item        = Light Attack
+item        = Light & Heavy Attack
+
+[Auto Mix-Up Light Attack Wait]
+shortdesc	= Use this slider to adjust the light attack wait time. Increase this if the guard direction is not reliably changing (if the character you use has long animation times). This has been optimised for the Warden.
+group       = true
+byteoffset	= 18
+bitsize		= 16
+control		= slider
+default		= 100
+minimum		= 50
+maximum		= 500
+step		= 50
+
+[Auto Mix-Up Heavy Attack Wait]
+shortdesc	= Use this slider to adjust the heavy attack wait time. Increase this if the guard direction is not reliably changing (if the character you use has long animation times). This has been optimised for the Warden.
+group       = true
+byteoffset	= 20
+bitsize		= 16
+control		= slider
+default		= 500
+minimum		= 50
+maximum		= 1000
+step		= 50
+
+[SPACE 6]
+control		= space
+default		= 25
+
+[Easy Attack]
+shortdesc   = Perform an Easy Attack by holding - instead of tapping - any of the face buttons.
+byteoffset	= 22
+bitsize		= 1
+bitoffset   = 0
+control		= checkbox
+default		= 0
+item		= Enable
+
+[Easy Attack Wait]
+group       = true
+shortdesc	= Configure how long you will need to hold the face buttons in order to perform an Easy Attack.
+byteoffset	= 23
+bitsize		= 16
+control		= slider
+default		= 250
+minimum		= 150
+maximum		= 500
+step		= 50
+
+[Easy Attack Option]
+group       = true
+byteoffset	= 25
+bitsize		= 8
+control		= combobox
+default		= 0
+item        = Light Attack
+item        = Heavy Attack
+
+[SPACE 7]
+control		= space
+default		= 25
+
+[Easy Feint]
+shortdesc   = Perform an Easy Feint by tapping in any direction on the right stick. If you do not have this enabled, the right stick will be used to control the face button instead (e.g. Up = Triangle, Left = Square, Right = Circle).
+byteoffset	= 26
+bitsize		= 1
+bitoffset   = 0
+control		= checkbox
+default		= 0
+item		= Enable
+
+[SPACE 8]
+control		= space
+default		= 25
+
+[Alternative Feint (Cancel Heavy)]
+shortdesc   = Perform a feint by tapping back on the left stick after performing a heavy attack (R2 / RT) (CANNOT be disabled if you have Easy Feint enabled).
+byteoffset	= 27
+bitsize		= 1
+bitoffset   = 0
+control		= checkbox
+default		= 1
+item		= Enable
+
+[SPACE 9]
+control		= space
+default		= 25
+
+[Alternative Revenge]
+shortdesc   = Activate Revenge Mode by double tapping the Dodge button (CANNOT be disabled if you have Easy Feint or arcade / fighting stick support enabled).
+byteoffset	= 28
+bitsize		= 1
+bitoffset   = 0
+control		= checkbox
+default		= 0
+item		= Enable
+</cfgdesc> */
+
+
+// ADDITIONAL META
+//
+// ----------------------------------------------------------------------------------------------------------------
+
+/* <shortdesc>
+<br />
+This is the GPC version of my script. I have posted this for people to use in their own scripts.
+<br /><br />
+<b>IMPORTANT:</b> because it contains a custom header file you will NOT be able to compile this, I have provided this purely to share my code. If you want to use my script please use the Bytecode version of this called "For Honor Combat Pack".
+<br /><br />
+If you do use any parts of my script I would appreciate it if you could at least credit me:)
+<br />
+</shortdesc>
+
+<keywords>
+for honor easy sprint face button guard direction swap remap combat pack titan two script easy feint arcade stick fighting stick auto attack
+</keywords> */

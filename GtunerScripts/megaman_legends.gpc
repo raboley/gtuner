@@ -1,0 +1,291 @@
+#pragma METAINFO("MM_Legends", 1, 0, "")
+
+bool RunMacroRun;
+uint8 RumbleStrength = 60;  // Set to 0 to disable rumble
+uint16 RumbleLength = 250; // Tweak to increase / decrease rumble length
+uint16 NormalWait = 50;
+
+combo cross {
+	set_val(BUTTON_16, 100.0);
+	wait (NormalWait);
+	set_val(BUTTON_16, 0.0);
+	wait (NormalWait);
+}
+
+main {
+	
+	     // rapid fires
+	//if(check_active(BUTTON_16, 100)) {
+      //  combo_run(cross);
+    //}
+	
+    set_val(STICK_2_Y, 0.0);
+    set_val(STICK_2_X, 0.0);
+	
+//     set_val(BUTTON_10, 0.0);
+//     set_val(BUTTON_11, 0.0);
+//     set_val(BUTTON_12, 0.0);
+//     set_val(BUTTON_13, 0.0);
+	
+	set_val(BUTTON_17, 0.0);
+	set_val(BUTTON_8, 0.0);
+	set_val(BUTTON_5, 0.0);
+	set_val(BUTTON_4, 0.0);
+	set_val(BUTTON_7, 0.0);
+ 
+	// map dpad to left stick
+    if(get_actual(STICK_2_Y) < -30.0) {
+        set_val(BUTTON_10, 100.0);
+    } else if(get_actual(STICK_2_Y) > 30.0) {
+        set_val(BUTTON_11, 100.0);
+    }    
+    if(get_actual(STICK_2_X) < -30.0) {
+        set_val(BUTTON_12, 100.0);
+    }
+    if(get_actual(STICK_2_X) > 30.0) {
+        set_val(BUTTON_13, 100.0);
+    }
+ 
+    if(get_actual(BUTTON_10)) {
+        set_val(STICK_2_Y, -100.0);
+    }
+    if(get_actual(BUTTON_11)) {
+        set_val(STICK_2_Y, 100.0);
+    }
+    if(get_actual(BUTTON_12)) {
+        set_val(STICK_2_X, -100.0);
+    }
+    if(get_actual(BUTTON_13)) {
+        set_val(STICK_2_X, 100.0);
+    }
+
+	// map shoot to r2
+	if(get_actual(BUTTON_5)) {
+		set_val(BUTTON_5, 0.0);
+		set_val(BUTTON_17, 100.0);
+	}
+	
+	// map lock on to L2
+	if(get_actual(BUTTON_8)) {
+		set_val(BUTTON_8, 0.0);
+		set_val(BUTTON_5, 100);
+	}
+	
+	// map camera x to right STICK
+	if(get_actual(STICK_1_X) < -30.0) {
+        set_val(BUTTON_7, 100.0);
+    }
+    if(get_actual(STICK_1_X) > 30.0) {
+        set_val(BUTTON_4, 100.0);
+    }
+	
+	// map jump to l1
+	if(get_actual(BUTTON_7)) {
+		set_val(BUTTON_16, 100.0);
+	}
+	
+	//map special to r1
+	if(get_actual(BUTTON_4)) {
+		set_val(BUTTON_14, 100.0);
+	}
+	
+	// Macro looper
+	if (get_actual(BUTTON_6) && event_active (BUTTON_9)) 
+        { RunMacroRun=!RunMacroRun; 
+            if (RunMacroRun) { combo_run (Rumble); ColorLED('A'); }
+            else if (!RunMacroRun) { combo_run (DoubleRumble); ColorLED('B'); }
+        }
+ 
+    if (RunMacroRun) { combo_run(goldenBird); } 
+    else if (!RunMacroRun) { combo_stop(goldenBird); }
+}
+
+combo goldenBird {
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 0.00);
+    set_val(BUTTON_17, 0.00);
+    wait(560);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 100.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 0.00);
+    set_val(BUTTON_17, 0.00);
+    wait(160);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 100.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 100.00);
+    set_val(BUTTON_17, 0.00);
+    wait(80);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 100.00);
+    set_val(BUTTON_17, 0.00);
+    wait(60);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 0.00);
+    set_val(BUTTON_17, 0.00);
+    wait(120);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 100.00);
+    set_val(BUTTON_17, 0.00);
+    wait(150);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 0.00);
+    set_val(BUTTON_17, 0.00);
+    wait(1650);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 0.00);
+    set_val(BUTTON_17, 100.00);
+    wait(4000);
+    set_val(BUTTON_10, 100.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 0.00);
+    set_val(BUTTON_17, 100.00);
+    wait(390);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 0.00);
+    set_val(BUTTON_17, 100.00);
+    wait(1150);
+    set_val(BUTTON_10, 100.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 0.00);
+    set_val(BUTTON_17, 100.00);
+    wait(320);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 0.00);
+    set_val(BUTTON_17, 100.00);
+    wait(820);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 0.00);
+    set_val(BUTTON_17, 0.00);
+    wait(130);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 100.00);
+    set_val(BUTTON_15, 0.00);
+    set_val(BUTTON_17, 0.00);
+    wait(1350);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 0.00);
+    set_val(BUTTON_17, 0.00);
+    wait(50);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 100.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 0.00);
+    set_val(BUTTON_17, 0.00);
+    wait(1190);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 100.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 100.00);
+    set_val(BUTTON_17, 0.00);
+    wait(110);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 100.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 0.00);
+    set_val(BUTTON_17, 0.00);
+    wait(40);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 0.00);
+    set_val(BUTTON_17, 0.00);
+    wait(40);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 100.00);
+    set_val(BUTTON_17, 0.00);
+    wait(150);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 0.00);
+    set_val(BUTTON_17, 0.00);
+    wait(140);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 100.00);
+    set_val(BUTTON_17, 0.00);
+    wait(150);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 0.00);
+    set_val(BUTTON_17, 0.00);
+    wait(90);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 100.00);
+    set_val(BUTTON_17, 0.00);
+    wait(140);
+    set_val(BUTTON_10, 0.00);
+    set_val(BUTTON_11, 0.00);
+    set_val(BUTTON_14, 0.00);
+    set_val(BUTTON_15, 0.00);
+    set_val(BUTTON_17, 0.00);
+    wait(2740);
+}
+//-------------------------------------------------------------------------------------------
+// MACRO LOOPER
+//-------------------------------------------------------------------------------------------
+ 
+
+ 
+ 
+combo Rumble {
+    ffb_set(FFB_1, (fix32) RumbleStrength, 180);
+    wait(0); wait(RumbleLength);
+    ffb_set(FFB_1, 0.0, 180);
+    wait(0); wait(RumbleLength);
+}
+ 
+combo DoubleRumble {
+    call (Rumble);
+    call (Rumble);
+}
+ 
+void ColorLED(char Color) {
+    fix32 Color1, Color2, Color3, Color4;
+ 
+    if(Color == 'B') {Color1 = 100.0;   Color2 = 0.00;    Color3 = 0.00;    Color4 = 0.00;}
+    if(Color == 'R') {Color1 = 0.00;    Color2 = 100.0;   Color3 = 0.00;    Color4 = 0.00;}
+    if(Color == 'G') {Color1 = 0.00;    Color2 = 0.00;    Color3 = 100.0;   Color4 = 0.00;}
+    if(Color == 'P') {Color1 = 0.00;    Color2 = 0.00;    Color3 = 0.00;    Color4 = 100.0;}
+    if(Color == 'C') {Color1 = 100.0;   Color2 = 0.00;    Color3 = 100.0;   Color4 = 0.00;}
+    if(Color == 'A') {Color1 = 0.00;    Color2 = 100.0;   Color3 = 100.0;   Color4 = 0.00;}
+    if(Color == 'W') {Color1 = 100.0;   Color2 = 100.0;   Color3 = 100.0;   Color4 = 100.0;}
+ 
+    led_set(LED_1, Color1, 0);
+    led_set(LED_2, Color2, 0);
+    led_set(LED_3, Color3, 0);
+    led_set(LED_4, Color4, 0);
+ 
+    return;
+}

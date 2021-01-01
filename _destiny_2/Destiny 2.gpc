@@ -1,0 +1,304 @@
+#pragma METAINFO("Destiny 2", 1, 0, "The_Rabid_Taco")
+
+#include <display.gph>
+
+#include "Rapid Fire.gph"
+#include "Weapon Tracking.gph"
+#include "Auto Sprint.gph"
+
+/*******************************************************************************
+<cfgdesc>
+
+[Kinetic Weapon]
+collapsible = 1
+
+[Kinetic Rapid Fire Activation]
+group       = true
+shortdesc   = <br><b>Fire Mode Activation</b>
+byteoffset	= 0
+bitsize		= 8
+control		= combobox
+default		= 0
+item		= Disabled
+item		= Always On
+item		= Activated on Fire and ADS (Scope Only)
+item		= Activated on Fire and not ADS (Hip Fire Only)
+
+[Kinetic Shots Per Minute]
+group       = true
+shortdesc	= <br><b>Shots per minute:</b><br>This is used to determine the rate of fire.
+byteoffset	= 1
+bitsize		= 16
+control		= spinbox
+default		= 150
+minimum		= 1
+maximum		= 1000
+step		= 1
+
+[Kinetic Shots Per Pull]
+group       = true
+shortdesc	= <br><b>Shots per press of fire:</b><br>Default Shots Per Trigger Pull <br> (Eg. Hand Cannon = 1, Scout Riffle = 1, Pulse = 3)<br>This is used to determine the rate of fire.
+byteoffset	= 3
+bitsize		= 16
+control		= spinbox
+default		= 1
+minimum		= 1
+maximum		= 1000
+step		= 1
+
+[Kinetic Weapon Rapid Reload Delay]
+group       = true
+shortdesc	= <br><b>Rapid Reload Delay (ms):</b><br>Set the time to cancel auto sprint on reload.<br>This will take trial and error, too fast will cancel reload, too long will cancel rapid fire and sprint for too long.
+byteoffset	= 5
+bitsize		= 16
+control		= spinbox
+default		= 1750
+minimum		= 0
+maximum		= 5000
+step		= 1
+
+[Kinetic Weapon Anti-Recoil Application]
+group       = true
+shortdesc	= <br><b>Anti-Recoil</b><br>Note yet functional, will be in next update.
+byteoffset	= 7
+bitsize		= 8
+control		= combobox
+default		= 5
+item		= Disabled
+item		= On Hold
+item		= On Release
+
+[Kinetic Weapon Anti Recoil Vertical Force]
+group       = true
+shortdesc	= <br><b>Anti-Recoil Vertical Pull Force Compensation:</b>
+byteoffset	= 8
+bitsize		= 32
+control		= spinboxf
+default		= 0000000
+minimum		= -100000000
+maximum		= 100000000
+step		= 500000
+
+[Kinetic Weapon Anti Recoil Horizontal Force]
+group       = true
+shortdesc	= <br><b>Anti-Recoil Horizontal Pull Force Compensation:</b>
+byteoffset	= 12
+bitsize		= 32
+control		= spinboxf
+default		= 0000000
+minimum		= -100000000
+maximum		= 100000000
+step		= 500000
+
+[Energy Weapon]
+collapsible = 1
+
+[Energy Rapid Fire Activation]
+group       = true
+shortdesc   = <br><b>Fire Mode Activation</b>
+byteoffset	= 16
+bitsize		= 8
+control		= combobox
+default		= 0
+item		= Disabled
+item		= Always On
+item		= Activated on Fire and ADS (Scope Only)
+item		= Activated on Fire and not ADS (Hip Fire Only)
+
+[Energy Shots Per Minute]
+group       = true
+shortdesc	= <br><b>Shots per minute:</b>
+byteoffset	= 17
+bitsize		= 16
+control		= spinbox
+default		= 150
+minimum		= 1
+maximum		= 1000
+step		= 1
+
+[Energy Shots Per Pull]
+group       = true
+shortdesc	= <br><b>Shots per press of fire:</b><br>Default Shots Per Trigger Pull <br> (Eg. Hand Cannon = 1, Scout Riffle = 1, Pulse = 3)
+byteoffset	= 19
+bitsize		= 16
+control		= spinbox
+default		= 1
+minimum		= 1
+maximum		= 1000
+step		= 1
+
+[Energy Weapon Rapid Reload Delay]
+group       = true
+shortdesc	= <br><b>Rapid Reload Delay (ms):</b><br>Set the time to cancel auto sprint on reload.<br>This will take trial and error, too fast will cancel reload, too long will cancel rapid fire and sprint for too long.
+byteoffset	= 21
+bitsize		= 16
+control		= spinbox
+default		= 1750
+minimum		= 0
+maximum		= 5000
+step		= 1
+
+[Energy Weapon Anti-Recoil Application]
+group       = true
+shortdesc	= <br><b>Anti-Recoil</b><br>Note yet functional, will be in next update.
+byteoffset	= 23
+bitsize		= 8
+control		= combobox
+default		= 5
+item		= Disabled
+item		= On Hold
+item		= On Release
+
+[Energy Weapon Anti Recoil Vertical Force]
+group       = true
+shortdesc	= <br><b>Anti-Recoil Vertical Pull Force Compensation:</b>
+byteoffset	= 24
+bitsize		= 32
+control		= spinboxf
+default		= 0000000
+minimum		= -100000000
+maximum		= 100000000
+step		= 500000
+
+[Energy Weapon Anti Recoil Horizontal Force]
+group       = true
+shortdesc	= <br><b>Anti-Recoil Horizontal Pull Force Compensation:</b>
+byteoffset	= 28
+bitsize		= 32
+control		= spinboxf
+default		= 0000000
+minimum		= -100000000
+maximum		= 100000000
+step		= 500000
+
+[Power Weapon]
+collapsible = 1
+
+[Power Rapid Fire Activation]
+group       = true
+shortdesc   = <br><b>Fire Mode Activation</b>
+byteoffset	= 32
+bitsize		= 8
+control		= combobox
+default		= 0
+item		= Disabled
+item		= Always On
+item		= Activated on Fire and ADS (Scope Only)
+item		= Activated on Fire and not ADS (Hip Fire Only)
+
+[Power Shots Per Minute]
+group       = true
+shortdesc	= <br><b>Shots per minute:</b>
+byteoffset	= 33
+bitsize		= 16
+control		= spinbox
+default		= 150
+minimum		= 1
+maximum		= 1000
+step		= 1
+
+[Power Shots Per Pull]
+group       = true
+shortdesc	= <br><b>Shots per press of fire:</b><br>Default Shots Per Trigger Pull <br> (Eg. Hand Cannon = 1, Scout Riffle = 1, Pulse = 3)
+byteoffset	= 35
+bitsize		= 16
+control		= spinbox
+default		= 1
+minimum		= 1
+maximum		= 1000
+step		= 1
+
+[Power Weapon Rapid Reload Delay]
+group       = true
+shortdesc	= <br><b>Rapid Reload Delay (ms):</b><br>Set the time to cancel auto sprint on reload.<br>This will take trial and error, too fast will cancel reload, too long will cancel rapid fire and sprint for too long.
+byteoffset	= 37
+bitsize		= 16
+control		= spinbox
+default		= 1750
+minimum		= 0
+maximum		= 5000
+step		= 1
+
+[Power Weapon Anti-Recoil Application]
+group       = true
+shortdesc	= <br><b>Anti-Recoil</b><br>Note yet functional, will be in next update.
+byteoffset	= 39
+bitsize		= 8
+control		= combobox
+default		= 5
+item		= Disabled
+item		= On Hold
+item		= On Release
+
+[Power Weapon Anti Recoil Vertical Force]
+group       = true
+shortdesc	= <br><b>Anti-Recoil Vertical Pull Force Compensation:</b>
+byteoffset	= 40
+bitsize		= 32
+control		= spinboxf
+default		= 0000000
+minimum		= -100000000
+maximum		= 100000000
+step		= 500000
+
+[Power Weapon Anti Recoil Horizontal Force]
+group       = true
+shortdesc	= <br><b>Anti-Recoil Horizontal Pull Force Compensation:</b>
+byteoffset	= 44
+bitsize		= 32
+control		= spinboxf
+default		= 0000000
+minimum		= -100000000
+maximum		= 100000000
+step		= 500000
+
+[Easy Sprint]
+shortdesc	= If you are tired of constantly pressing the left thumbstick to make your character sprint, Easy Sprint is just what you have been looking for.
+collapsible = 1
+
+[Enable Easy Sprint]
+group       = true
+shortdesc   = <br><b>Enable Easy Sprint</b>
+byteoffset	= 48
+bitsize		= 1
+bitoffset	= 7
+control		= checkbox
+default		= 1
+item		= Enable Easy Sprint
+
+[Easy Sprint Type]
+group       = true
+shortdesc	= <br><b>Select Easy Sprint Type</b>
+byteoffset	= 49
+bitsize		= 8
+control		= radiobox
+default		= 0
+item		= Fully Automatic
+item		= Pressure Sensative
+
+[Easy Sprint Pressure]
+group       = true
+shortdesc	= <br><b>Select pressure applied before easy sprint is applied:</b>
+byteoffset	= 50
+bitsize		= 32
+control		= spinboxf
+default		= 98000000
+minimum		= 0
+maximum		= 100000000
+step		= 500000
+
+[Bumper Jumper]
+shortdesc	= <br><b>For those who play with bumpers and triggers swapped out.</b>
+byteoffset 	= 54
+bitsize 	= 1
+bitoffset	= 7
+control		= checkbox
+default		= 0
+item		= Bumper Jumper
+
+</cfgdesc>
+*******************************************************************************/
+
+main {
+
+}

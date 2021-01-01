@@ -1,0 +1,1043 @@
+#pragma METAINFO("HUNTER FUN PACK", 1, 02, "antithesis")
+#include <titanone.gph>
+
+//==============================================================================
+/* DESTINY - Hunter Fun Pack
+//------------------------------------------------------------------------------
+
+        This is the most fully-featured script available for Destiny's Hunter class. Warlock and Titan scripts have been published separately.
+         
+         Credits:     Authored by antithesis for the Console Tuner forums - www.consoletuner.com/forum/
+                      Thanks to The_Rabid_Taco for the Anti-Recoil and Toggle functions butchered for this script.
+                      Thanks also to Bonefisher for answering all of my stupid questions.
+                      Thanks most of all to J2Kbr for creating Titan One - you've made console gaming fun again!
+                      Not to mention the various anonymous authors for random snippets refactored to work with
+                      this script. You are gone Guardian, but not forgotten :salute:
+                      
+         Version:     1.02  + Added TOGGLE RESET combo to clear odd T2 behaviour of enabling toggles like NLB and Jumper Layout by default
+		                      The first time the script is loaded on T2, hold D-PAD DOWN and click PS/XBOX to clear all toggles, then set them up as needed
+						    + Changed primary toggle button from D-PAD UP to D-PAD DOWN. I felt creepy waving every time a toggle was enabled
+							+ Fixed broken Rumble combo and added DoubleRumble for disabled Toggle notification. More bytespace to play with is a good thing!
+         
+         Date:        Wednesday October 5, 2016  
+
+         Device:      Titan One
+         System:      PS4 and XB1
+         Controller:  DualShock 4, XB1 controller, XB1 Elite, Scuf, Xim4 with m/kb or Nav/kb
+         
+         Support:     https://www.consoletuner.com/forum/viewtopic.php?f=26&t=6560
+
+//==============================================================================         
+// COPYRIGHT
+
+    2016 antithesis from http://www.consoletuner.com. This Script was made and intended for http://www.Consoletuner.com & Titan 0ne ONLY, 
+    UNLESS written permission is given by the creator and/or copywritee.  
+    All rights reserved. This material may not be reproduced, displayed, modified or distributed without the express prior written permission
+    of the copyright holder. For permission, contact antithesis via http://www.consoletuner.com/forum    
+
+//------------------------------------------------------------------------------
+// FEATURES
+
+   Weapon Tracking:     LED lights indicate Primary (green LED), Special (red LED) and Heavy (Yellow LED) weapons
+                        Primary and Special weapons have separate rapid-fire, rapid-reload, quick-scope ADS, quick-scope SHOOT, and weapon-swap settings
+                        Primary and Special have separate anti-recoil modes, for both HIP and ADS
+                        Quickly reset Weapon Tracking for Primary, Special or Heavy if tracking comes unstuck
+
+        Rapid-Fire:     Separate Primary and Special ON/OFF rapid-fire modes
+                        Includes SHOOT hold and SHOOT rest times for Primary and Special in both HIP and ADS, allowing fine control over fire-rates
+                        Works with all weapons, including Fusion Rifles and can improve the ADS fire-rate of Automatic Rifles in Focused Fire mode including Suros Regime
+                        
+       Anti-Recoil:     Primary and Special left, right and vertical anti-recoil, with separate HIP and ADS modes
+                        Anti-recoil supports Xim 4 and MaxAim, as well as controllers
+                        
+       Trick Shots:     No-scope, quick-scope, weapon-swap no-scope and weapon-swap quick-scope
+                        Primary and Special weapons feature separate SWAP, ADS and SHOOT speeds for flexible load-outs
+                        
+        Auto-Melee:     Rapid-MELEE, and auto-MELEE after Special Weapon SHOOT, if moving forward or backwards
+                        Hold MELEE to rapid-melee
+                        
+       Auto-Sprint:     Get your SPRINT going without wearing out your thumb bones
+                        Hold left stick forward to auto-sprint. Reload and Rapid-reload friendly
+                        
+     Tighter Turns:     Increased sensitivity for faster turning while sprinting
+        
+       Sniper Mode:     Reduced sensitivity while ADS for improved accuracy and experimenting with Aim Assist lock-on
+    
+         Shadestep:     Auto-shadestep while wearing Graviton Foreit, or the Shadestep perk is enabled on a Nightstalker, with cooldown rumble
+                        Hold CROUCH to Shadestep. Does not disrupt normal slide or CROUCH
+                        
+       Wombo Combo:     Hold GRENADE to toss the Nightstalker Wombo Combo
+    
+       Auto-Revive:     Aim and SHOOT while reviving your fireteam
+                        Press D-PAD DOWN to Revive
+    
+      Rapid-Reload:     Speed up RELOAD, or take advantage of the Final Round weapon perk by popping only one round in the chamber
+                        Separate Primary and Special weapon RELOAD speeds. Auto-sprint friendly
+                        Does not disrupt normal RELOAD while stationary, or if Auto-sprint is disabled
+                        
+    No Land Beyond:     Triple the RELOAD speed and fire-rate, when NLB has reserve ammo 
+                        Rumble on cooldown between shots when NLB has no reserve amno
+                        
+     Jumper Layout:     Swap to Jumper button layout for improved Jump and Shadestep control. It's what the pros use. Be a pro
+    
+     Menu Friendly:     Disables all combos when accessing Menus via OPTIONS button
+                        
+Persistent Toggles:     Customise your game by turning on only the stuff you want to use, with rumble feedback on activation
+                        Set and forget with toggle ON/OFF states that are saved to Titan One, or change them on-the-fly
+      
+//------------------------------------------------------------------------------
+// CONTROLLER TOGGLES
+
+			- Toggle Reset				D-PAD DOWN + PS/XBOX
+            - Weapon Tracking Reset     R3 (Default), or D-PAD LEFT (Jumper)
+            
+            
+            // Hold D-PAD DOWN, click button to the right   
+            
+            - Primary Rapid-fire        D-PAD DOWN + PS4 R2 / XB1 RT, while holding Primary weapon (green LED)
+            - Special Rapid-fire        D-PAD DOWN + PS4 R2 / XB1 RT, while holding Special weapon (red LED)
+            - Anti-recoil               D-PAD DOWN + PS4 L2 / XB1 LT
+            - Rapid-reload              D-PAD DOWN + PS4 SQUARE / XB1 X
+            - Shadestep                 D-PAD DOWN + PS4 CIRCLE / XB1 B
+            - Super mode                D-PAD DOWN + PS4 CROSS / XB1 A
+            - Wombo Combo               D-PAD DOWN + PS4 L1 / XB1 LB
+            - Auto-melee                D-PAD DOWN + PS4 R1 / XB1 RB
+            - Auto-sprint               D-PAD DOWN + PS4 L3 / XB1 LS
+            - Auto-revive               D-PAD DOWN + PS4 R3 / XB1 RS
+
+            
+            
+            // Hold D-PAD RIGHT, click button to the right
+
+            - No Land Beyond            D-PAD RIGHT + PS4 SQUARE / XB1 X
+            - No-scope                  D-PAD RIGHT + PS R2 / XB1 RT
+            - Quick-scope               D-PAD RIGHT + PS4 L2 / XB1 LT
+            - Weapon-swap scope-shots   D-PAD RIGHT + PS4 R1 / XB1 RB
+            - Jumper Layout             D-PAD RIGHT + PS4 R3 / XB1 R3
+            
+
+//------------------------------------------------------------------------------
+// INSTRUCTIONS
+
+            - All toggles are stored on the Titan One and are disabled by default 
+            - IMPORTANT: When using the OPTIONS menu, all mods are disabled to prevent stupid stuff, like auto-dismantling and rapid-fire purchases 
+              It's possible to spawn into a map in this state, pressing CROUCH, ADS or SHOOT while in-game will re-enable all mods
+              
+            - Toggle everything you want turned on, they'll save automatically to the Titan One
+            - No-scope and Quick-scope trick shots integrate with Auto-melee. Enable both to
+              perform actions like MELEE after SHOOT
+            - Rapid-reload integrates with Auto-sprint. Enable both for Rapid-reload to function
+            
+            - Once the initial setup is complete, the only toggles that will be used on a
+              regular basis are Primary & Special Rapid-fire, and maybe No Land Beyond, 
+              Shadestep and Auto-revive, depending on your load-out and game mode
+              
+            - Disable Anti-recoil and leave Rapid-fire Hold and Wait times at 50 if frequently changing load-outs mid-game
+              Disable weapon-swap scope-shots for competitive 3v3 PvP (changes double-ADS behaviour)
+              Enable auto-revive only for competitive 3v3 PvP
+              
+            - R3 (or D-Pad Left on Jumper) will see regular use to reset errant weapon flags
+              There's a lot of conditional code to eliminate flag swaps, but they rely on presses
+              of CHANGE WEAPON and/or R3 / D-Pad Left rather than in-game tracking, so they can come unstuck
+              A quick R3 / D-pad Left press will get them back on-track
+              
+            - Primary & Special weapons fire-rates, anti-recoil settings for HIP & ADS,  
+              weapon swap time (important for ShotGuns), shoot hold times (important for Fusion Rifles), 
+              ADS hold times (important for Snipers), reload times and auto-melee times 
+              are customisable below in DECLARATIONS, as is auto-revive (time depends on gear) and Sniper Mode
+              
+            - The script is documented throughout. Read the green notes in each section to understand 
+              their function and use that information to experiment with your weapon load-outs
+              
+            - Given the suite of customisation options, this script is targeted at those looking to fine-tune
+              their settings to match specific load-outs. Instead of constantly copying files across to the Titan One 
+              and rebooting do the following -
+              
+                    1. Connect Titan One to PC and transfer this script to a spare slot
+                    2. Enable all toggles you want turned on on a regular basis 
+                       NOTE - this is important to get persistent toggles to set correctly when using Build and Run
+                    3. Connect Titan One to both PC and console
+                    4. Load up GTuner Pro, go to the Compiler tab and open this file 
+                    5. Edit ONLY the red numbers values in DECLARATIONS to tweak the script to your load-out
+                    6. Use the Build and Run option to test the settings in-game
+                    7. Repeat steps 5 and 6 until everything feels right
+                    
+            - Comments (green text following "//") are unlimited in a GPC script, so make note of your 
+              custom settings for future reference and punch them in when swapping load-outs. Create multiple copies
+              of this file tweaked to custom load-outs and swap between them using Titan One slots
+
+*/
+
+//==============================================================================
+// DECLARATIONS
+
+//------------------------------------------------------------------------------
+// DEFAULT CONTROLLER LAYOUT
+
+/*   Default Layout should be fine for mouse & keyboard, Scuf or XB1 Elite controllers
+    
+     - Do NOT rename any of the define aliases (e.g HOME, SHARE etc) or the script will break
+       All aliases work for all supported platforms
+       
+     - Do NOT edit the red values below, unless you REALLY know what you're doing, for example
+       remapping ADS and SHOOT from L2 / R2 to L1 / R1
+     
+     - Do NOT uncomment the defines for MELEE, FLAG_RESET, GRENADE, DPAD_LEFT and JUMP
+       They have been replaced with Variables, are managed via the Jumper Layout toggle
+       and are kept here for button mapping reference only
+     
+     !!! NOTE: FLAG_RESET is  R3 / RS in Default Layout
+     
+*/
+
+
+define HOME          = 0;      // XB1_XBOX    XB360_XBOX   PS4_PS           PS3_PS
+define SHARE         = 1;      // XB1_VIEW    XB360_BACK   PS4_SHARE        PS3_SELECT
+define OPTIONS       = 2;      // XB1_MENU    XB360_START  PS4_OPTIONS      PS3_START
+// define MELEE      = 3;      // XB1_RB      XB360_RB     PS4_R1           PS3_R1
+define SHOOT         = 4;      // XB1_RT      XB360_RT     PS4_R2           PS3_R2
+// define FLAG_RESET = 5;      // XB1_RS      XB360_RS     PS4_R3           PS3_R3
+// define GRENADE    = 6;      // XB1_LB      XB360_LB     PS4_L1           PS3_L1
+define ADS           = 7;      // XB1_LT      XB360_LT     PS4_L2           PS3_L2
+define SPRINT        = 8;      // XB1_LS      XB360_LS     PS4_L3           PS3_L3
+define RX_AXIS       = 9;      // XB1_RX      XB360_RX     PS4_RX           PS3_RX
+define RY_AXIS       = 10;     // XB1_RY      XB360_RY     PS4_RY           PS3_RY
+define LX_AXIS       = 11;     // XB1_LX      XB360_LX     PS4_LX           PS3_LX
+define LY_AXIS       = 12;     // XB1_LY      XB360_LY     PS4_LY           PS3_LY
+define DPAD_UP       = 13;     // XB1_UP      XB360_UP     PS4_UP           PS3_UP
+define DPAD_DOWN     = 14;     // XB1_DOWN    XB360_DOWN   PS4_DOWN         PS3_DOWN
+// define DPAD_LEFT  = 15;     // XB1_LEFT    XB360_LEFT   PS4_LEFT         PS3_LEFT
+define DPAD_RIGHT    = 16;     // XB1_RIGHT   XB360_RIGHT  PS4_RIGHT        PS3_RIGHT
+define WEAPON_SWAP   = 17;     // XB1_Y       XB360_Y      PS4_TRIANGLE     PS3_TRIANGLE
+define CROUCH        = 18;     // XB1_B       XB360_B      PS4_CIRCLE       PS3_CIRCLE
+// define JUMP       = 19;     // XB1_A       XB360_A      PS4_CROSS        PS3_CROSS
+define RELOAD        = 20;     // XB1_X       XB360_X      PS4_SQUARE       PS3_SQUARE
+
+//------------------------------------------------------------------------------
+// JUMPER CONTROLLER LAYOUT
+
+/*  Jumper is the recommended button layout for competitive PvP
+
+    Hold D-PAD RIGHT and press R3 / RS to toggle between Default and Jumper
+
+    Several buttons differ in Destiny's Jumper button layout -
+    
+    1.  D-PAD LEFT (15)     = FLAG_RESET
+    2.  SUPER (19)           = [] / X
+    3.  MELEE (5)            = R3 / RS
+    4.  JUMP (6)             = L1 / LB
+    5.  GRENADE (3)          = R1 / RB
+    6.  HIGHLIGHT            = L1 + R1
+    
+    !!! NOTE: FLAG_RESET is  D-Pad Left in Jumper Layout
+    
+*/
+
+//------------------------------------------------------------------------------
+// QUICK-SCOPE
+
+define PriScope    = 250;  // ADS hold time for Primary weapon Quick-scope. e.g 250 for Uni Remote, 700 for No Land Beyond. Perks affect scope speed
+define SecScope    = 700;  // ADS hold time for Special weapon Quick-scope. e.g 250 for primed Plan C or Shotguns, 700+ for Snipers. Perks affect scope speed
+
+define PriShoot    = 250;  // SHOOT hold time for Primary weapon. e.g 250 for all Primaries
+define SecShoot    = 750;  // SHOOT hold time for Special weapon. e.g 250 for Shotguns & Snipers, 350 for primed Plan C, 750 for non-primed Plan C & other Fusion Rifles
+
+//------------------------------------------------------------------------------
+// WEAPON SWAP NO-SCOPE / QUICK-SCOPE
+
+define PriSwap     = 300;  // Primary weapon swap animation time. Perks affect swap speed
+define SecSwap     = 300;  // Special weapon swap animation time. Perks affect swap speed
+
+//------------------------------------------------------------------------------
+// AUTO-MELEE
+
+define NoScopeWait = 200;  // Time to wait before MELEE while Shotgun rushing to force Destiny to SHOOT before MELEE. Do NOT go under 110ms
+define ScopeWait   = 350;  // Time to wait before Melee attack after Quick-scope SHOOT while moving backwards
+
+//------------------------------------------------------------------------------
+// SHADESTEP
+
+define ShadeStepDelay = 120; // Time to hold CROUCH before Shadestep triggers. 120ms by default
+define ShadeStepWait = 50; // Delay between CROUCH button presses
+
+//------------------------------------------------------------------------------
+// WOMBO COMBO
+
+define WomboComboWait = 50; // Delay between MELEE and GRENADE button presses
+
+//------------------------------------------------------------------------------
+// RAPID-FIRE
+/*
+    - Rounds per minute (RPM) for Destiny weapons can be found at https://docs.google.com/spreadsheets/d/1L7FV9l4hXo2tHD3XlFUp854XvJIwTKFIPvASLduPPS4
+    - Divide RPM by 60 for rounds per second (RPS)
+    - Divide 1000 (ms) by RPS, for milliseconds per shot (MPS)
+    - Divide MPS by 2 to find the approximate SHOOT & WAIT times
+        
+        e.g  The Last Word  =  225 RPM
+                    225/60  =  3.75 RPS
+                 1000/3.75  =  266 MPS
+                     266/2  =  133 Hold / Rest times
+    
+    - Adjust Hold & Rest times up & down, and/or tweak the balance of Hold & Rest until the weapon feels right
+    - For greater recoil control (in addition to Anti-recoil), use Hold and Rest values higher than MPS/2
+    - Set to 0 to disable Rapid-fire for any mode. For example, fire a Suros Regime in automatic for HIP, but semi-automatic for increased ADS Focused Fire fire-rate
+*/
+
+// Primary HIP, Primary ADS, Special HIP and Special ADS following are set to 10 rounds / sec by default (50 Hold +50 Rest = 100 ms)
+
+define Pri_HIP_Hold  = 0;   // Primary weapon hold SHOOT time. Set to 0 to disable Rapid-Fire in HIP mode to allow Suros Regime to fire full-auto from the HIP
+define Pri_HIP_Rest  = 0;   // Primary weapon release SHOOT time
+
+define Pri_ADS_Hold  = 39;   // Primary weapon hold SHOOT time e.g 39 for Suros Regime in Focused Fire mode. Set to 133 for The Last Word
+define Pri_ADS_Rest  = 39;   // Primary weapon release SHOOT time e.g 39 for Suros Regime in Focused Fire mode. Set to 30 for The Last Word
+
+define Sec_HIP_Hold  = 50;   // Special weapon hold SHOOT time
+define Sec_HIP_Rest  = 50;   // Special weapon release SHOOT time
+
+define Sec_ADS_Hold  = 50;   // Special weapon hold SHOOT time
+define Sec_ADS_Rest  = 50;   // Special weapon release SHOOT time
+
+
+//------------------------------------------------------------------------------
+// RAPID-RELOAD
+
+/*  - RELOAD will pause a SPRINT (if active), wait for the pre-defined RELOAD times below, then auto-SPRINT to cancel the RELOAD
+    - Standing still perform a normal RELOAD, but can be cancelled by pushing the left stick forward to Auto-sprint
+    - RELOAD wait times vary by weapon. Incorrect timing will prevent the RELOAD
+    - Reduce wait times to take advantage of the Final Round perk on Shotguns
+*/
+
+define PriReloadWait = 2200; // Time to wait for Primary weapon to reload. e.g 2500 for Shotguns, 2200 for Hand Cannons & 1750 for Pulse Rifles. Use fast reload gauntlets for maximum gain
+define SecReloadWait = 2200; // Time to wait for Special weapon to reload. e.g 2500 for Shotguns, 1200 for SideArms & Snipers. Use fast reload gauntlets for maximum gain
+
+//------------------------------------------------------------------------------
+// ANTI-RECOIL
+/*
+    NOTE: data type changed from define to int to allow negative X & Y axis values
+    - Use values between -100 to 100 to adjust Left and Right X-axis (horizontal) anti-recoil. Use Left or Right, not both
+    - Use values between -100 to 100 to adjust Y-axis (vertical) anti-recoil
+    - Know your weapon recoil patterns before entering a match and don't change the load-out without editing these values
+    - Enter 0 for no anti-recoil or disable all anti-recoil via D-PAD UP + PS4 L2 / XB1 LT
+    - Xim4 requires values of 12 or higher for X & Y axes to be noticeable 
+*/
+int Pri_Hip_H = 0;       // Primary Hip X-axis Horizontal. Range of -100 to 100. Min of 12 to get an AR effect for Xim4
+int Pri_Hip_V = 34;       // Primary Hip Y-axis Vertical. Range of -100 to 100. Min of to get an AR effect 12 for Xim4
+
+int Pri_ADS_H = 0;       // Primary ADS X-axis Horizontal. Range of -100 to 100. Min of 12 to get an AR effect for Xim4
+int Pri_ADS_V = 34;       // Primary ADS Y-axis Vertical. Range of -100 to 100. Min of 12 to get an AR effect for Xim4
+
+int Sec_Hip_H = 12;       // Special Hip X-axis Horizontal. Range of -100 to 100. Min of 12 to get an AR effect for Xim4
+int Sec_Hip_V = 61;       // Special Hip Y-axis Vertical. Range of -100 to 100. Min of 12 to get an AR effect for Xim4
+
+int Sec_ADS_H = 12;       // Special ADS X-axis Horizontal. Range of -100 to 100. Min of 12 to get an AR effect for Xim4
+int Sec_ADS_V = 61;       // Special ADS Y-axis Vertical. Range of -100 to 100. Min of 12 to get an AR effect for Xim4
+
+define Invert_Y = 0;     // Change to 1 to invert Y-Axis anti-recoil
+
+//------------------------------------------------------------------------------
+// AUTO-REVIVE
+
+define ReviveTime = 4000;  // Adjust if wearing Crest of Alpha Lupi or Light Beyond Nemesis
+
+//------------------------------------------------------------------------------
+// RUMBLE
+
+define RumbleStrength = 60;  // Change to 0 to disable rumble
+
+//------------------------------------------------------------------------------
+// TIGHTER TURNS
+
+/*  - Increases sensitivity for faster turns while Sprinting
+    - Helpful for Shotgunners and Xim 4 / MaxAim users 
+    - TighterTurns values apply a multiplier to right stick X-axis sensitivity, e.g 200 = sensitivity x 2
+    - MidPoint determines where the effect applies. Use values above 50 for faster external range movement
+    
+    NOTE: Tweak the SprintThreshold to determine where Tighter Turns kicks in on left stick movement
+          WA & WD keyboard diagonals register at 84% when both are pressed. Normal SPRINT look mechanics are used until only W is pressed
+          Change SprintThreshold to 85 to enable Tighter Turns for W key presses
+          WA & WD diagonals will use Tighter Turns unless A or D are pressed before W
+
+*/
+
+define SprintThreshold = 85; // 70 by default. Left stick position before SPRINT auto-enables
+
+define TighterTurns = 120;  // 200 by default. Range of 0 to 327. Increase to 250 for stupid fast turns. Set to 120 if wearing Fr0st-EE5 boots
+define TT_MidPoint  =  NOT_USE;  // 75 by default. Range of sensitivity (1-100). Set to NOT_USE to apply the effect to the full range of movement
+
+//------------------------------------------------------------------------------
+// SNIPER MODE
+
+/*  - Decreases right stick X-axis sensitivity for more accurate aim and experimentally, to enhance Aim Assist lock-on
+    - SniperMode values apply a multiplier to right stick X & Y sensitivity, e.g 90 = sensitivity x 0.9
+    - MidPoint determines where the effect applies. Use values below 50 to slow internal range movement
+
+    NOTE: When aiming down sights (ADS), hold SPRINT to enable Sniper Mode
+    
+    More information on Titan One Sensitivity - http://www.consoletuner.com/kbase/i_o_functions.htm#sensitivity
+*/
+
+define SteadyAim_X   = 70; // 70 by default. Range of 0 to 327. Strength of sensitivity. Values under 100 reduce sensitivity. Values above 100 increase sensitivity. Set to 0 to disable
+define SA_MidPoint_X = NOT_USE; // 60 by default. Range of 0 to 100. Set to NOT_USE to apply the effect to the full range of movement
+
+define SteadyAim_Y   = 70; // 70 by default. Range of 0 to 327. Strength of sensitivity. Values under 100 reduce sensitivity. Values above 100 increase sensitivity. Set to 0 to disable
+define SA_MidPoint_Y = NOT_USE; // 60 by default. Range of 0 to 100. Set to NOT_USE to apply the effect to the full range of movement
+
+//==============================================================================
+// LOOK BUT DON'T TOUCH ANYTHING BELOW THIS LINE. YOU BREAK IT, YOU BOUGHT IT!
+//==============================================================================
+
+//------------------------------------------------------------------------------
+// Persistent Vars
+define PVAR_ToggleFlags = SPVAR_1;
+
+
+//==============================================================================
+// VARIABLES
+
+//------------------------------------------------------------------------------
+// Store toggle states
+int ToggleFlags;
+
+//------------------------------------------------------------------------------
+// Function & Combo Variables
+
+int OptionsMenu = 1;  // Disables combos for OPTIONS Menu navigation
+int NavState;
+int ReloadWait;
+int MeleeWait;
+int RightStick_X = 0;
+int RightStick_Y = 0;
+int HoldTime, RestTime;
+int Timer;
+int GunFlags;
+int ScopeHold, ShootHold, ScopeSwap;
+int FLAG_RESET, MELEE, JUMP, GRENADE, SUPER, DPAD_LEFT;
+int SparrowToggle = 0;
+int SparrowRide = 0;
+
+//==============================================================================
+// INITIALISATION
+
+init 
+{
+    // Set initial Gun Flag state
+    combo_run(SetPrimary);
+    
+    // Retrieve Toggle States
+    ToggleFlags = get_pvar(PVAR_ToggleFlags, -32768, 32767, 0);
+}
+
+//==============================================================================
+// MAIN
+
+main 
+{
+    // Repeat main loop every 4ms. Higher values add to T1 CPU load
+    vm_tctrl(-9);
+    
+//------------------------------------------------------------------------------
+// BUTTON LAYOUT
+
+    // Swap to Jumper layout
+    if (test_bit(ToggleFlags, 13)) 
+    { FLAG_RESET = 15; MELEE = 5; JUMP = 6; GRENADE = 3; SUPER = 19; }
+    else
+    { DPAD_LEFT = 15; FLAG_RESET = 5; GRENADE = 6; MELEE = 3; JUMP = 19; }
+
+//------------------------------------------------------------------------------
+// HAIR TRIGGERS
+ 
+    // Shoot
+    if (get_val(SHOOT)) { set_val(SHOOT, 100); } 
+    
+    // ADS    
+    if (get_val(ADS)) { set_val(ADS, 100); }
+    
+//------------------------------------------------------------------------------
+// TOGGLES
+
+    if (get_val(DPAD_DOWN)) 
+    
+    // Hold D-PAD DOWN, click button to the right   
+    /*  
+            - Primary Rapid-fire        D-PAD DOWN + PS4 R2 / XB1 RT, while holding Primary weapon (green LED)
+            - Special Rapid-fire        D-PAD DOWN + PS4 R2 / XB1 RT, while holding Special weapon (red LED)
+            - Anti-recoil               D-PAD DOWN + PS4 L2 / XB1 LT
+            - Rapid-reload              D-PAD DOWN + PS4 SQUARE / XB1 X
+            - Shadestep                 D-PAD DOWN + PS4 CIRCLE / XB1 B
+            - Super mode                D-PAD DOWN + PS4 CROSS / XB1 A
+            - Wombo Combo               D-PAD DOWN + PS4 L1 / XB1 LB
+            - Auto-melee                D-PAD DOWN + PS4 R1 / XB1 RB
+            - Auto-sprint               D-PAD DOWN + PS4 L3 / XB1 LS
+            - Auto-revive               D-PAD DOWN + PS4 R3 / XB1 RS
+            
+    */
+    {
+    
+        // Super Toggle (PS4 CROSS / XB1 A)
+        if (event_press (19)) { SetToggle (1); }
+        
+        //  Equip Primary weapon and check LED is green before toggling Primary rapid-fire (PS4 R2 / XB1 RT)
+        if(event_press(4) && test_bit (GunFlags, 1)) { SetToggle(2); }
+        
+        //  Equip Special weapon and check LED is red before toggling Special rapid-fire (PS4 R2 / XB1 RT)
+        if(event_press(4) && test_bit (GunFlags, 2)) {SetToggle (3); }
+        
+        // Rapid Reload (PS4 SQUARE / XB1 X)
+        if(event_press(20)) { SetToggle (4); }
+        
+        //Auto-revive (PS4 R3 / XB1 RS)
+        if(event_press (5)) { SetToggle (5); }
+        
+        // Shadestep (PS4 CIRCLE / XB1 B)
+        if(event_press(18)) { SetToggle (6); }
+        
+        // Auto-melee (PS4 R1 / XB1 RB)
+        if (event_press (3)) { SetToggle (7); }
+        
+        // Auto-sprint (PS4 L3 / XB1 LS)
+        if(event_press (8)) { SetToggle (8); }
+        
+        // Anti-recoil (PS4 L2 / XB1 LT)
+        if (event_press (7)) { SetToggle (9); }
+        
+        // Anti-recoil (PS4 L2 / XB1 LB)
+        if (event_press (6)) { SetToggle (15); }
+    }
+
+    if (get_val (DPAD_RIGHT)) 
+    
+    // Hold D-PAD RIGHT, click button to the right
+/*
+            - No Land Beyond            D-PAD RIGHT + PS4 SQUARE / XB1 X
+            - No-scope                  D-PAD RIGHT + PS R2 / XB1 RT
+            - Quick-scope               D-PAD RIGHT + PS4 L2 / XB1 LT
+            - Weapon-swap scope-shots   D-PAD RIGHT + PS4 R1 / XB1 RB
+            - Jumper Layout             D-PAD RIGHT + PS4 R3 / XB1 R3
+*/
+    {
+    
+        // No Scope (PS R2 / XB1 RT)
+        if (event_press (4)) { SetToggle (10); }
+        
+        // No Land Beyond (PS4 SQUARE / XB1 X)
+        if (event_press (20)) { SetToggle (11); }
+        
+        // Quick Scope (PS4 L2 / XB1 LT)
+        if (event_press (7)) { SetToggle (12); }
+        
+        // Jumper Button Layout (PS4 R3 / XB1 RS)
+        if (event_press (5)) { SetToggle (13); }
+        
+        // Weapon swap no-scope (PS4 R1 / XB1 RB)
+        if (event_press (3)) { SetToggle (14); }
+    }
+	
+//------------------------------------------------------------------------------
+// TOGGLE RESET
+
+    // Hold D-PAD DOWN and press PS/XBOX to reset all Toggles to disabled state 
+    if (get_val (DPAD_DOWN) && event_press (HOME))
+        { 
+            clear_bit (ToggleFlags, 1); clear_bit (ToggleFlags, 2); clear_bit (ToggleFlags, 3); 
+            clear_bit (ToggleFlags, 4); clear_bit (ToggleFlags, 5); clear_bit (ToggleFlags, 6);
+            clear_bit (ToggleFlags, 7); clear_bit (ToggleFlags, 8); clear_bit (ToggleFlags, 9);
+            clear_bit (ToggleFlags, 10); clear_bit (ToggleFlags, 11); clear_bit (ToggleFlags, 12);
+            clear_bit (ToggleFlags, 13); clear_bit (ToggleFlags, 14);
+			LED (0,0,0,0);
+        }
+
+//------------------------------------------------------------------------------
+// MENU NAVIGATION
+
+    /*  - Using the in-game Menu via OPTIONS disables gun flags to prevent accidental flag swaps when changing load-outs
+        - It's still possible to spawn into a match with the wrong flag if using SWAP WEAPON in Citadel vendor or Invite Friends menus
+        - Pressing OPTIONS to Open Character then OPTIONS again to Return to Vendor disables the issue in the Citadel
+    */ 
+    
+    if (event_release (OPTIONS)) 
+    { OptionsMenu = 0; NavState = 1; }
+        
+    // Pressing CROUCH, ADS or SHOOT to exit Menu re-enables gun flags 
+    if (event_release (CROUCH) || get_val (ADS) || get_val (SHOOT) && NavState) 
+    { OptionsMenu = 1; NavState = 0; }
+
+if (OptionsMenu) { // start OptionsMenu
+    
+//------------------------------------------------------------------------------    
+// WEAPON TRACKING
+    
+    // Changing weapons automatically updates the gun flags for Primary, Special and Heavy
+    // Manually reset flags via FLAG_RESET (Default R3, Jumper D-PAD LEFT)
+    
+        // Swap to Primary from Special on Change Weapon tap or R3 / D-PAD LEFT click (sets a green LED)
+        if ( (test_bit (GunFlags, 2) || test_bit (GunFlags, 5)) && (event_press (WEAPON_SWAP) || event_press (FLAG_RESET)) )
+            { combo_run (SetPrimary); }
+            
+        //Swap to Special from Primary on change Weapon tap or R3 / D-PAD LEFT click (sets a red LED)
+        else if ( test_bit (GunFlags, 1) && (event_press (WEAPON_SWAP) || event_press (FLAG_RESET))  )
+            { combo_run (SetSpecial); }
+        
+        // Swap to Heavy from Primary or Special on Change Weapon or R3 / D-PAD LEFT hold (sets a yellow LED)
+        else if ( (test_bit (GunFlags, 1) || test_bit (GunFlags, 2)) && (event_release (WEAPON_SWAP) && get_ptime (WEAPON_SWAP) > 300) || (event_release (FLAG_RESET) && get_ptime (FLAG_RESET) > 300) )
+            { combo_run (SetHeavy); }
+
+        // Swap to Primary from Heavy on Change Weapon tap or hold (sets a green LED)            
+        else if ( test_bit (GunFlags, 3) && (event_release (WEAPON_SWAP) || event_release (FLAG_RESET)) )
+             { combo_run (SetPrimary); }       
+            
+        // Reset Heavy to Primary while waiting for respawn (sets a green LED) if the left and right sticks are not moving
+        if (test_bit (GunFlags, 3) && !(get_val(RX_AXIS) || get_val (RY_AXIS) || get_val (LX_AXIS) || get_val (LY_AXIS)) && event_release (RELOAD) && get_ptime (RELOAD) < 200 )
+            { combo_run (SetPrimary); }
+            
+//------------------------------------------------------------------------------
+// SUPERS
+
+    // D-PAD UP + PS4 CROSS / XB1 A
+    if(test_bit (ToggleFlags, 1)) 
+    {
+        // Disable AutoMelee on Super activation to prevent disruption to Golden Gun
+        if ( get_val (GRENADE) && get_val (MELEE) )
+        { 
+            if (test_bit (GunFlags, 2))
+            {
+                clear_bit (GunFlags, 2); set_bit (GunFlags, 5);
+                combo_stop (AutoMelee);
+                LED (0,0,0,1);
+            }
+        }
+    }
+
+//------------------------------------------------------------------------------
+// RAPID-FIRE, ANTI-RECOIL & SENSITIVITY
+
+    // Hip-fire Settings
+   
+    if (!get_val (ADS)) 
+    {
+            // Primary HIP
+            if (test_bit(GunFlags, 1)) 
+            { 
+                if (get_val (SHOOT))
+                {   if (test_bit (ToggleFlags, 2)) 
+                    { RapidFireSpeed (Pri_HIP_Hold, Pri_HIP_Rest); } // Rapid-fire
+                    if (test_bit (ToggleFlags, 9))
+                    { AntiRecoil(Pri_Hip_H, Pri_Hip_V); } // Anti-recoil
+                }
+            }
+                
+            // Special HIP
+            if (test_bit(GunFlags, 2) || test_bit (GunFlags, 5))
+            {     
+                if (get_val (SHOOT))
+                {   if (test_bit (ToggleFlags, 3)) 
+                    { RapidFireSpeed (Sec_HIP_Hold, Sec_HIP_Rest); } // Rapid-fire
+                    if (test_bit (ToggleFlags, 9))
+                    { AntiRecoil(Sec_Hip_H, Sec_Hip_V); } // Anti-recoil
+                }
+            }
+                        
+            // Tighter turns
+            if (get_val (SPRINT))
+            {sensitivity (RX_AXIS, TT_MidPoint, TighterTurns); } 
+    }
+        
+    // Aim Down Sights Settings
+    
+    if (get_val(ADS))
+    {
+            // Primary ADS
+            if (test_bit(GunFlags, 1)) 
+            {
+                if (get_val (SHOOT))
+                {   if (test_bit (ToggleFlags, 2)) 
+                    { RapidFireSpeed (Pri_ADS_Hold, Pri_ADS_Rest); } // Rapid-fire
+                    if (test_bit (ToggleFlags, 9))
+                    { AntiRecoil(Pri_ADS_H, Pri_ADS_V); } // Anti-recoil
+                }
+            }
+            
+            // Special ADS
+            if (test_bit(GunFlags, 2) || test_bit (GunFlags, 5))
+            {
+                if (get_val (SHOOT))
+                {   if (test_bit (ToggleFlags, 3)) 
+                    { RapidFireSpeed (Sec_ADS_Hold, Sec_ADS_Rest); } // Rapid-fire
+                    if (test_bit (ToggleFlags, 9))
+                        { AntiRecoil(Sec_ADS_H, Sec_ADS_V); } // Anti-recoil
+                }
+            }
+                        
+            // Sniper Mode
+            if (get_val (SPRINT)) 
+                    { set_val (SPRINT, 0);  // prevents SPRINT from breaking ADS if moving forward while in Sniper Mode
+                      sensitivity (RX_AXIS, SA_MidPoint_X, SteadyAim_X);
+                      sensitivity (RY_AXIS, SA_MidPoint_Y, SteadyAim_Y); }
+    }
+    
+//------------------------------------------------------------------------------
+// SHADESTEP
+
+    // Hold CROUCH to Shadestep. Requires Nightstalker class and Graviton Forfeit helmet or Shadestep perk
+    // Rumble timer for cooldown. Timing allows for normal tap CROUCH or Slide
+       
+    if (get_val (CROUCH) && get_ptime (CROUCH) > ShadeStepDelay && test_bit(ToggleFlags, 6))
+    { combo_run (ShadeStep); combo_run (ShadeCooldown); }
+   
+//------------------------------------------------------------------------------
+// WOMBO COMBO
+ 
+    // Hold GRENADE to throw the Wombo Combo. Requires Nightstalker class. Holding GRENADE will not trigger Super
+    
+    if ( event_press (GRENADE) && test_bit (ToggleFlags, 15))
+    { combo_run (WomboCombo); }
+    
+//------------------------------------------------------------------------------   
+// AUTO-MELEE
+
+    // Hold MELEE to Auto-Melee. Also used for no-scope & quick-scope follow-up Melee attacks and auto-Shoulder Charge
+    
+    if ( get_val(MELEE) && test_bit(ToggleFlags, 7)) 
+    { combo_run(AutoMelee); }
+    
+//------------------------------------------------------------------------------
+// AUTO-REVIVE
+    
+    // Press D-Pad DOWN to Auto-revive
+    
+    if (get_val (DPAD_DOWN) && test_bit(ToggleFlags, 5)) 
+    { combo_run (AutoRevive); }
+        
+//------------------------------------------------------------------------------        
+// SPARROW MODE
+
+    // Prevents Auto-Sprint interference while riding a Sparrow
+    // Press JUMP or WEAPON SWAP if Auto-Sprint appears to be blocked while not riding a Sparrow
+
+    if (event_release (PS4_TOUCH) || event_release (XB1_VIEW)) { SparrowToggle = 1; }
+    if (SparrowToggle && event_release (RELOAD) && get_ptime (RELOAD) > 1000) { SparrowRide = 1; }
+    if (SparrowRide && event_press (RELOAD) || event_press (JUMP) || event_press (WEAPON_SWAP)) { SparrowToggle = 0; SparrowRide = 0; }
+        
+//------------------------------------------------------------------------------        
+// AUTO-SPRINT 
+
+    // Hold left stick forward to SPRINT
+    // Rapid-reload must be enabled to automatically SPRINT after RELOAD
+
+    if( get_val(LY_AXIS) < -SprintThreshold && !(get_val(ADS) || get_val(MELEE) || get_val(JUMP) || get_val(SHOOT) || get_val (CROUCH) || SparrowRide) && test_bit (ToggleFlags, 8)) 
+    { block (SPRINT, 500); set_val (SPRINT, 100);  // Block allows for SHOOT to trigger while SPRINT is active. Needed for No-scope Auto-melee
+    }
+
+//------------------------------------------------------------------------------  
+// RAPID RELOAD
+
+    // Rapid Reload reduces reload animation time with a SPRINT animation cancel
+    // Auto-sprint must be enabled for Rapid Reload to function
+        
+    if (event_press (RELOAD) && test_bit(ToggleFlags, 4)) {combo_run (RapidReload); }
+        
+//------------------------------------------------------------------------------
+// NO LAND BEYOND 
+
+    //  RELOAD animation cancel to shorten reload time and increase fire-rate. Requires No Land Beyond sniper rifle
+    //  NLB fire-rate increase does not apply when no reserve ammo is available 
+    //  A timer rumbles two seconds after a shot to alert when NLB is ready to fire
+    
+    // Apply NLB combo to Primary weapon (green LED)
+    if ( test_bit (GunFlags, 1) && test_bit(ToggleFlags, 11)) 
+        { if (get_val (SHOOT) ) 
+            { combo_run (NLBCooldown); combo_run(NLB); } 
+        }
+
+//------------------------------------------------------------------------------
+// TRICK SHOTS
+ 
+    // NO-SCOPE MELEE - tap SHOOT
+    // Enable for Shotgunners, disable for Snipers
+    
+    if (test_bit(ToggleFlags, 10) && test_bit(GunFlags, 2))
+    {
+        // MELEE after SHOOT
+        if ( event_press (SHOOT) && test_bit(ToggleFlags, 7))
+        { MeleeWait = NoScopeWait; combo_run (AutoMelee); }
+    }
+
+    // QUICK-SCOPE - tap ADS
+    // Enable for Snipers, disable for Shotgunners
+    
+    if (test_bit(ToggleFlags, 12) && test_bit(GunFlags, 2)) 
+    {
+        if ( event_release (ADS) && get_ptime (ADS) < 200)
+        {
+            // ADS quick-scope followed by auto-SHOOT and auto-MELEE if moving backwards (Shotgun counter)
+            if (get_val (LY_AXIS) > 70 )
+                { combo_run (QuickScope); 
+                    if (test_bit(ToggleFlags, 7)) { MeleeWait = ScopeWait; combo_run (AutoMelee); }
+                }
+            // ADS quick-scope only, for strafing in and out of cover
+            else { combo_run (QuickScope); }
+        }
+    }
+        
+    // WEAPON SWAP NO-SCOPE - double-tap ADS to swap weapons and auto no-scope. Disable for competitive 3v3 PvP
+    // WEAPON SWAP QUICK-SCOPE - hold ADS, tap RELOAD. Keep holding ADS to swap weapons and auto quick-scope 
+    
+    if (test_bit(ToggleFlags, 14)) 
+    {
+        if (Timer > 0) { Timer = Timer - get_rtime(); }
+        if (event_release(ADS)) { Timer = 200; } // 200ms to detect double-ADS tap
+        if ((event_press(ADS) && Timer > 0) || (get_val (ADS) && event_press (RELOAD))) 
+        { 
+            Timer = 0;
+                if (test_bit(GunFlags, 1)) { combo_run (SetSpecial);  }
+                else if (test_bit(GunFlags, 2) || test_bit (GunFlags, 3)) { combo_run (SetPrimary); }
+                set_val (ADS, 0); combo_run (SwapQuickScope);
+        }
+    }
+
+//------------------------------------------------------------------------------
+} // end OptionsMenu
+
+//------------------------------------------------------------------------------
+} // end main
+
+//==============================================================================
+// COMBOS
+
+combo SetPrimary
+{
+    clear_bit(GunFlags, 2);
+    clear_bit(GunFlags, 3);
+    clear_bit (GunFlags, 5);
+    set_bit(GunFlags, 1); // Sets gun flag to Primary
+    LED(0, 0, 1, 0); // Green
+    ScopeHold = PriScope; // Quick-scope ADS
+    ShootHold = PriShoot; // Quick-scope SHOOT
+    ScopeSwap = PriSwap; // Weapon-swap quick-scope
+    ReloadWait = PriReloadWait; // Reload wait
+}
+    
+combo SetSpecial
+{
+    clear_bit(GunFlags, 1);
+    clear_bit (GunFlags, 5);
+    set_bit(GunFlags, 2); // Sets gun flag to Special
+    LED(0, 1, 0, 0); // Red
+    ScopeHold = SecScope; // Quick-scope ADS
+    ShootHold = SecShoot; // Quick-scope SHOOT
+    ScopeSwap = PriSwap; // Weapon-swap quick-scope
+    ReloadWait = SecReloadWait; // Reload wait
+}
+    
+combo SetHeavy      
+{
+    clear_bit(GunFlags, 1);
+    clear_bit(GunFlags, 2);
+    clear_bit (GunFlags, 5);
+    set_bit(GunFlags, 3); // Sets gun flag to Heavy
+    LED(0, 1, 1, 0); // Yellow
+}
+
+combo ShadeStep 
+{
+    set_val (CROUCH, 0); // Clears first CROUCH
+    wait(ShadeStepWait);
+    set_val(CROUCH, 100); // second CROUCH for ShadeStep
+    wait(ShadeStepWait);
+    set_val (CROUCH,0);
+}
+
+combo ShadeCooldown 
+{
+    wait (3200); // Cooldown timer for Shadestep
+    combo_run (Rumble);
+}
+
+combo WomboCombo
+{
+    set_val (GRENADE, 0);
+    set_val (MELEE, 100);  // Toss SMOKE
+    wait (WomboComboWait);
+    set_val (MELEE, 0);
+    set_val (GRENADE, 100);  // Toss GRENADE
+    wait (WomboComboWait);
+    set_val (GRENADE, 0);  // Clearing GRENADE before MELEE prevents Super from triggering
+}
+
+combo NLBCooldown 
+{
+    wait (2200); // Cooldown timer for NLB when out of reserve ammo
+    combo_run (Rumble);
+}
+
+combo AutoMelee 
+{
+    wait(MeleeWait); // wait times before MELEE are different for moving forward or backpeddling
+    set_val(MELEE, 100);
+    wait(50); // wait time set to ensure MELEE after SHOOT
+    set_val(MELEE, 0);
+    wait(50);
+    set_val(MELEE, 0);
+}
+
+combo AutoRevive 
+{
+    set_val (DPAD_DOWN, 0);
+    set_val(RELOAD, 100);
+    wait(ReviveTime); // Adjust in DEFINES if wearing fast revive gear
+    set_val(RELOAD, 0);
+}
+
+combo QuickScope
+{
+    set_val(ADS, 100);
+    wait(ScopeHold); // Adjust in DEFINES. Separate settings for Primary and Special
+    set_val(SHOOT, 100);
+    wait(ShootHold);  // Adjust in DEFINES. Separate settings for Primary and Special
+    set_val(ADS, 0);
+    set_val(SHOOT, 0);
+}
+
+combo SwapQuickScope
+{
+    set_val (WEAPON_SWAP, 100);
+    wait (100);
+    wait (ScopeSwap); // Adjust in DEFINES. Separate settings for Primary and Special
+    combo_run (QuickScope);
+}
+
+combo RapidFire 
+{
+    set_val(SHOOT, 100);
+    wait(HoldTime);
+    set_val(SHOOT, 0);
+    wait(RestTime);
+    set_val(SHOOT, 0);
+}
+
+combo RapidReload
+{ 
+    set_val (SPRINT, 0);
+    wait (ReloadWait); // Adjust in DEFINES. Separate settings for Primary and Special
+    wait (50);
+    set_val (SPRINT, 100);
+}
+
+combo SprintLoop  // SprintLoop prevents random NLB reloads
+{
+    set_val(LY_AXIS, -100);
+    wait(20);
+    set_val(SPRINT, 100);
+}
+
+combo NLB
+{
+    set_val(SHOOT, 100);
+    wait(50);
+    set_val(SHOOT, 100);
+    set_val(RELOAD, 100);
+    wait(50);
+    set_val(SHOOT, 0);
+    set_val(RELOAD, 100);
+    wait(50);
+    set_val(RELOAD, 0);
+    wait(50); // IMPORTANT! 50 by default
+    set_val(LY_AXIS, -100);//       |
+    wait(20);             //        |- do not delete this block
+    set_val(SPRINT, 100);//         |
+    combo_run (SprintLoop);
+    wait (160); // IMPORTANT! 200 by default, 160 with SnapShot perk
+    combo_stop (SprintLoop);
+}
+
+combo Rumble {
+    ffb_set(FFB_1, 100.0, 180);
+    wait(0); wait(200);
+    ffb_set(FFB_1, 0.0, 180);
+    wait(0); wait(200);
+}
+ 
+combo DoubleRumble {
+    ffb_set(FFB_1, 100.0, 180);
+    wait(0); wait(200);
+    ffb_set(FFB_1, 0.0, 180);
+    wait(0); wait(200);
+    ffb_set(FFB_1, 100.0, 180);
+    wait(0); wait(200);
+    ffb_set(FFB_1, 0.0, 180);
+    wait(0); wait(200);
+}
+
+//==============================================================================
+// FUNCTIONS
+
+//------------------------------------------------------------------------------
+// RAPID-FIRE
+
+function RapidFireSpeed (RF_HoldTime, RF_RestTime)
+{   
+    HoldTime = RF_HoldTime; RestTime = RF_RestTime;
+    if (HoldTime > 0)
+        { combo_run(RapidFire); }
+}
+
+//------------------------------------------------------------------------------
+// ANTI-RECOIL
+
+function AntiRecoil (AntiRecoil_H, AntiRecoil_V) 
+{
+    //  Anti-recoil parameters
+    if (get_val(SHOOT) && isqrt(pow(get_val(RX_AXIS), 2) + pow(get_val(RY_AXIS), 2)) <= abs(AntiRecoil_V))
+    {
+        if(abs(RY_AXIS) <= abs(AntiRecoil_V))
+        {
+            // Horizontal anti-recoil
+            RightStick_X = (get_val(RX_AXIS) + (AntiRecoil_H*(100-abs(get_val(RX_AXIS))))/100);
+                set_val(RX_AXIS, RightStick_X);
+                    
+            // Vertical anti-recoil
+            if (Invert_Y) { RightStick_Y = (get_val(RY_AXIS) - (AntiRecoil_V*(100-abs(get_val(RY_AXIS))))/100); } // Y-axis invert
+            else { RightStick_Y = (get_val(RY_AXIS) + (AntiRecoil_V*(100-abs(get_val(RY_AXIS))))/100); }
+            if (RightStick_Y >  (AntiRecoil_V)) {RightStick_Y = (AntiRecoil_V) ;}
+                set_val(RY_AXIS, RightStick_Y);
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+// SET TOGGLES
+
+function SetToggle(FlagLocation) {
+    if(test_bit(ToggleFlags, FlagLocation)) {
+        clear_bit(ToggleFlags, FlagLocation);
+		if (RumbleStrength > 0) {combo_run(DoubleRumble); }
+    } 
+    else {
+        set_bit(ToggleFlags, FlagLocation);
+        if (RumbleStrength > 0) { combo_run(Rumble); }
+    }
+    set_pvar(PVAR_ToggleFlags, ToggleFlags);
+}
+
+//------------------------------------------------------------------------------
+// LED LIGHTS
+
+   function LED(a, b, c, d) // Make the lights pretty
+{
+   set_led(0, a);
+   set_led(1, b);
+   set_led(2, c);
+   set_led(3, d);
+}
+
+//------------------------------------------------------------------------------
+// LED DEFINITIONS FOR PS4 LIGHT BAR
+
+// LED(0,0,0,0); // Off
+// LED(1,0,0,0); // Blue
+// LED(0,1,0,0); // Red
+// LED(0,0,1,0); // Green
+// LED(0,0,0,1); // Pink
+// LED(1,0,1,0); // SkyBlue
+// LED(0,1,1,0); // Yellow
+// LED(1,1,1,1); // White

@@ -1,0 +1,160 @@
+#pragma METAINFO("raboley", 1, 0, "")
+#include <titanone.gph>
+
+define UP = 13;
+define DOWN = 14;
+define LEFT = 15;
+define RIGHT = 16;
+define A = 18;
+define B = 19;
+define Y = 20;
+uint16 NormalWait = 50;
+uint16 ScreenWait = 500;
+uint16 ShortScreenWait = 500;
+
+
+combo down {
+	set_val(DOWN, 100.0);
+	wait (NormalWait);
+	set_val(DOWN, 0.00);
+	wait (NormalWait);
+}
+
+combo up {
+	set_val(UP, 100.0);
+	wait (NormalWait);
+	set_val(UP, 0.00);
+	wait (NormalWait);
+}
+
+combo right {
+	set_val(RIGHT, 100.0);
+	wait (NormalWait);
+	set_val(RIGHT, 0.00);
+	wait (NormalWait);
+}
+
+combo left {
+	set_val(LEFT, 100.0);
+	wait (NormalWait);
+	set_val(LEFT, 0.00);
+	wait (NormalWait);
+}
+
+combo a {
+	set_val(A, 100.0);
+	wait (NormalWait);
+	set_val(A, 0.00);
+	wait (NormalWait);
+}
+
+combo b {
+	set_val(B, 100.0);
+	wait (NormalWait);
+	set_val(B, 0.00);
+	wait (NormalWait);
+}
+
+combo y {
+	set_val(Y, 100.0);
+	wait (NormalWait);
+	set_val(Y, 0.00);
+	wait (NormalWait);
+}
+
+// Has to be normal speed 4x screws it up
+// press Select and Start to Start the macro
+combo winRace {
+	call(y);
+//	wait (100);
+	call(a);
+//	wait (100);
+}
+//-------------------------------------------------------------------------------------------
+// MACRO LOOPER
+//-------------------------------------------------------------------------------------------
+ 
+bool RunMacroRun;
+uint8 RumbleStrength = 60;  // Set to 0 to disable rumble
+uint16 RumbleLength = 250; // Tweak to increase / decrease rumble length
+uint8 i = 0;
+uint8 MaxRuns = 2;
+
+main {
+    // hold Select and tap Start to start the macro. Do the same to stop the macro.
+    if (get_val (BUTTON_2) && event_active (BUTTON_3)) 
+        { RunMacroRun=!RunMacroRun; 
+            if (RunMacroRun) { combo_run (Rumble); ColorLED('A'); i = 0; }
+            else if (!RunMacroRun) { combo_run (DoubleRumble); ColorLED('B'); i = MaxRuns; }
+        }
+ 
+    if (RunMacroRun) { 
+		combo_run(winRace);
+		// stopping after one execution for now
+		//RunMacroRun = !RunMacroRun;
+		} 
+    else if (!RunMacroRun) { combo_stop(winRace); }
+ 
+} // main
+ 
+combo Rumble {
+    ffb_set(FFB_1, (fix32) RumbleStrength, 180);
+    wait(0); wait(RumbleLength);
+    ffb_set(FFB_1, 0.0, 180);
+    wait(0); wait(RumbleLength);
+}
+ 
+combo DoubleRumble {
+    call (Rumble);
+    call (Rumble);
+}
+ 
+void ColorLED(char Color) {
+    fix32 Color1, Color2, Color3, Color4;
+ 
+    if(Color == 'B') {Color1 = 100.0;   Color2 = 0.00;    Color3 = 0.00;    Color4 = 0.00;}
+    if(Color == 'R') {Color1 = 0.00;    Color2 = 100.0;   Color3 = 0.00;    Color4 = 0.00;}
+    if(Color == 'G') {Color1 = 0.00;    Color2 = 0.00;    Color3 = 100.0;   Color4 = 0.00;}
+    if(Color == 'P') {Color1 = 0.00;    Color2 = 0.00;    Color3 = 0.00;    Color4 = 100.0;}
+    if(Color == 'C') {Color1 = 100.0;   Color2 = 0.00;    Color3 = 100.0;   Color4 = 0.00;}
+    if(Color == 'A') {Color1 = 0.00;    Color2 = 100.0;   Color3 = 100.0;   Color4 = 0.00;}
+    if(Color == 'W') {Color1 = 100.0;   Color2 = 100.0;   Color3 = 100.0;   Color4 = 100.0;}
+ 
+    led_set(LED_1, Color1, 0);
+    led_set(LED_2, Color2, 0);
+    led_set(LED_3, Color3, 0);
+    led_set(LED_4, Color4, 0);
+ 
+    return;
+}
+
+/*
+SWITCH_HOME             0
+SWITCH_MINUS            1
+SWITCH_PLUS             2
+SWITCH_R                3
+SWITCH_ZR               4
+SWITCH_SR               5
+SWITCH_L                6
+SWITCH_ZL               7
+SWITCH_SL               8
+SWITCH_RX               9
+SWITCH_RY               10
+SWITCH_LX               11
+SWITCH_LY               12
+SWITCH_UP               13
+SWITCH_DOWN             14
+SWITCH_LEFT             15
+SWITCH_RIGHT            16
+SWITCH_X                17
+SWITCH_A                18
+SWITCH_B                19
+SWITCH_Y                20
+SWITCH_ACCX             21
+SWITCH_ACCY             22
+SWITCH_ACCZ             23
+SWITCH_GYROX            24
+SWITCH_GYROY            25
+SWITCH_GYROZ            26
+SWITCH_CAPTURE          27
+*/

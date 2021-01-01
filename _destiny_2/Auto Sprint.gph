@@ -1,0 +1,129 @@
+bool AutoSprintEnabled;
+
+uint8 AutoSprintType, AutoSprintFlag, SparrowRide;
+
+fix32 AutoSprintPressure;
+
+init {
+	pmem_load();
+	
+// -------------------------------------------------------------------------- //
+// |                    Read Auto Sprint Settings                           | //
+// -------------------------------------------------------------------------- //
+	AutoSprintEnabled = (pmem_read(48) >> 7) & 0b1;
+	AutoSprintType = pmem_read(49);
+	pmem_read(50, &AutoSprintPressure);
+	
+	if(AutoSprintEnabled == TRUE) AutoSprintFlag = TRUE;
+// ========================================================================== //
+}
+
+main {
+// -------------------------------------------------------------------------- //
+// |                     Auto Sprint Based On Selection                     | //
+// |            Type 0 = Always On, Type 1 = Pressure Sensative             | //
+// -------------------------------------------------------------------------- //
+	if(AutoSprintEnabled == TRUE && AutoSprintType == 0 && AutoSprintFlag == TRUE) {
+		combo_run(EasySprint);
+	} else if(AutoSprintEnabled == TRUE && AutoSprintType == 1 && AutoSprintFlag == TRUE) {
+		if(abs(get_val(STICK_2_Y)) >= AutoSprintPressure) combo_run(EasySprint);
+	} else combo_stop(EasySprint);
+// ========================================================================== //
+	
+	
+// -------------------------------------------------------------------------- //
+// |             Toggle Auto Sprint In Game - Double Tap L3                 | //
+// -------------------------------------------------------------------------- //
+	if(event_active(BUTTON_9) && time_release(BUTTON_9) < 250) {
+		ToggleAutoSprint();
+	}
+// ========================================================================== //
+	
+	
+// -------------------------------------------------------------------------- //
+// |                 Auto Sprint Cancel When Shooting or ADS                | //
+// -------------------------------------------------------------------------- //
+	if(get_actual(Shoot) > 0.0 || get_actual(ADS) > 0.0) { 
+		AutoSprintFlag = FALSE;
+		combo_stop(EasySprint);
+	} else if(event_release(Shoot) || event_release(ADS)) AutoSprintFlag = TRUE;
+// ========================================================================== //
+	
+	
+// -------------------------------------------------------------------------- //
+// |                   Sprint Cancelation When On Sparrow                   | //
+// -------------------------------------------------------------------------- //
+	if((getLastPressed() == BUTTON_18 || getLastPressed() == BUTTON_2) && get_val(BUTTON_17)) {
+		SparrowRide = TRUE;
+		AutoSprintFlag = FALSE;
+		ColorLED('C');
+	}
+	
+	if (SparrowRide == TRUE && event_active(BUTTON_17)) {
+		SparrowRide = FALSE;
+		AutoSprintFlag = TRUE;
+		
+		if(weaponFlags[0] == TRUE) {
+			ColorLED('W');
+		} else if(weaponFlags[1] == TRUE) {
+			ColorLED('G');
+		} else if(weaponFlags[2] == TRUE) {
+			ColorLED('P');
+		}
+	}
+	
+	if(SparrowRide == TRUE) AutoSprintFlag = FALSE;
+	else if(SparrowRide == FALSE && time_release(BUTTON_17) >= RapidReloadDelay) AutoSprintFlag = TRUE;
+	
+	
+// ========================================================================== //
+	
+
+// -------------------------------------------------------------------------- //
+// |                     Sprint Cancelation On Reload                       | //
+// -------------------------------------------------------------------------- //
+	if(get_val(BUTTON_17) && SparrowRide == FALSE) {
+		AutoSprintFlag = FALSE;
+		combo_stop(EasySprint);
+		combo_run(rapidReloadDelay);
+	}
+// ========================================================================== //
+}
+
+combo EasySprint{
+    set_val(BUTTON_9, 100.0);
+    wait(60);
+    set_val(BUTTON_9, 0.0);
+    wait(60);
+}
+
+combo rapidReloadDelay {
+	wait(RapidReloadDelay);
+	AutoSprintFlag = TRUE;
+}
+
+void ToggleAutoSprint() {
+	
+	if(AutoSprintEnabled == TRUE) {
+		AutoSprintEnabled = FALSE;
+		pmem_write(60, 0);
+	} else if(AutoSprintEnabled == FALSE){
+		AutoSprintEnabled = TRUE;
+		pmem_write(60, 255);
+	}
+	
+	pmem_save();
+}
+
+uint8 getLastPressed() {
+	uint8 X;
+	uint8 LastPressed = BUTTON_1;
+	
+	for (X = BUTTON_2; X <= BUTTON_21; ++X) {
+		if(time_release(X) < time_release(LastPressed)) {
+			LastPressed = X;
+		}
+	}
+	
+	return LastPressed;
+}

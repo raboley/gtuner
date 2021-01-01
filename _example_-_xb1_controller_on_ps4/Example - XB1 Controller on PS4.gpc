@@ -1,0 +1,78 @@
+#pragma METAINFO("Example - XB1 Controller on PS4", 1, 0, "pablogroup")
+
+#include <ps4.gph>
+
+
+// INPUT INITIALIZATION
+//
+// ----------------------------------------------------------------------------------------------------------------
+
+#define SHARE      PS4_SHARE
+#define TOUCHPAD   PS4_TOUCH
+#define HOME       PS4_PS
+	
+
+// VARIABLES
+//
+// ----------------------------------------------------------------------------------------------------------------
+uint8   statusInA, protocolInA, deviceInA;
+uint8   statusInB, protocolInB, deviceInB;
+uint8   statusOut, protocolOut, deviceOut;
+
+
+// THE MAIN SCRIPT
+//
+// ----------------------------------------------------------------------------------------------------------------
+
+main {
+	statusInA = port_status(PORT_USB_A, &protocolInA, &deviceInA);
+	statusInB = port_status(PORT_USB_B, &protocolInB, &deviceInB);
+	statusOut = port_status(PORT_USB_C, &protocolOut, &deviceOut);
+    if(((protocolInA == PROTOCOL_XB1) || (protocolInB == PROTOCOL_XB1)) && (protocolOut == PROTOCOL_PS4)) { 
+        if(get_val(PS4_SHARE)) {
+            set_val(PS4_SHARE, 0);
+            set_val(PS4_TOUCH, 100);
+        }
+		if(event_active(HOME) && time_release(HOME) < 150) {
+			combo_run(HomeBlock);
+			combo_run(ShareButtonShortcut); 
+		}
+    }
+}
+
+
+// COMBOS
+//
+// ----------------------------------------------------------------------------------------------------------------
+
+combo HomeBlock {
+    set_val(HOME, 0);
+    wait(300);
+}
+
+combo ShareButtonShortcut {
+    set_val(SHARE, 100);
+    wait(40);
+}
+
+
+/* <shortdesc>
+<br />
+When using an Xbox One controller on a PS4, this script allows you to access the Touchpad by pressing the View button.
+<br /><br />
+To access the PS share menu, you simply double tap the Home button instead. 
+<br /><br />
+This is only needed if you are using an Xbox One controller on a PS4, NOT an Xbox One controller on an Xbox One.
+<br /><br />
+The beauty of this script is that it doesn't matter which port you have the Xbox One controller plugged into - it automatically detects that you have one.
+<br /><br />
+This is also compatible with the Xbox One Elite controller.
+<br /><br />
+Note that if you would like to revert back to the standard PS4 controller, make sure you unplug the Xbox One controller first, otherwise the Share button will still be mapped to the Touchpad.
+<br /><br />
+Full credit goes to The_Rabid_Taco for this script, thank you!
+</shortdesc>
+
+<keywords>
+xbox 1 controller on ps4 auto detect touchpad support
+</keywords> */

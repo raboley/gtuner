@@ -1,0 +1,98 @@
+#pragma METAINFO("ff9 rapid", 1, 01, "")
+#include <titanone.gph>
+
+uint16 NormalWait = 40;
+
+define A = 18;
+define Y = 20;
+
+combo a {
+	set_val(A, 100.0);
+	wait (NormalWait);
+	set_val(A, 0.00);
+	wait (NormalWait);
+}
+
+combo y {
+	set_val(Y, 100.0);
+	wait (NormalWait);
+	set_val(Y, 0.00);
+	wait (NormalWait);
+}
+
+combo auto_battle {
+	combo_run(a);
+	combo_run(diagonal);
+}
+
+combo diagonal {
+	set_val(STICK_2_X, -38);
+	set_val(STICK_2_Y, -92);
+}
+
+// Macro related
+bool AutoBattle;
+uint8 RumbleStrength = 60;  // Set to 0 to disable rumble
+uint16 RumbleLength = 250; // Tweak to increase / decrease rumble length
+uint8 i = 0;
+uint8 MaxRuns = 2;
+
+
+main {
+    // rapid fires
+	if(check_active(BUTTON_17, 100)) {
+        combo_run(y);
+    }
+	
+	if(check_active(BUTTON_15, 100)) {
+        combo_run(a);
+    }
+	
+	// Macro types
+	
+	// Auto Battle
+	//// hold Select and tap A to start the macro. Do the same to stop the macro.
+    if (get_val (BUTTON_2) && event_active (BUTTON_15)) 
+        { AutoBattle=!AutoBattle; 
+            if (AutoBattle) { combo_run (Rumble); ColorLED('A'); }
+            else if (!AutoBattle) { combo_run (DoubleRumble); ColorLED('B'); }
+        }
+		
+	if (AutoBattle) { 
+		combo_run(auto_battle);
+		} 
+    else if (!AutoBattle) { combo_stop(auto_battle); }
+	
+}
+
+
+combo Rumble {
+    ffb_set(FFB_1, (fix32) RumbleStrength, 180);
+    wait(0); wait(RumbleLength);
+    ffb_set(FFB_1, 0.0, 180);
+    wait(0); wait(RumbleLength);
+}
+ 
+combo DoubleRumble {
+    call (Rumble);
+    call (Rumble);
+}
+ 
+void ColorLED(char Color) {
+    fix32 Color1, Color2, Color3, Color4;
+ 
+    if(Color == 'B') {Color1 = 100.0;   Color2 = 0.00;    Color3 = 0.00;    Color4 = 0.00;}
+    if(Color == 'R') {Color1 = 0.00;    Color2 = 100.0;   Color3 = 0.00;    Color4 = 0.00;}
+    if(Color == 'G') {Color1 = 0.00;    Color2 = 0.00;    Color3 = 100.0;   Color4 = 0.00;}
+    if(Color == 'P') {Color1 = 0.00;    Color2 = 0.00;    Color3 = 0.00;    Color4 = 100.0;}
+    if(Color == 'C') {Color1 = 100.0;   Color2 = 0.00;    Color3 = 100.0;   Color4 = 0.00;}
+    if(Color == 'A') {Color1 = 0.00;    Color2 = 100.0;   Color3 = 100.0;   Color4 = 0.00;}
+    if(Color == 'W') {Color1 = 100.0;   Color2 = 100.0;   Color3 = 100.0;   Color4 = 100.0;}
+ 
+    led_set(LED_1, Color1, 0);
+    led_set(LED_2, Color2, 0);
+    led_set(LED_3, Color3, 0);
+    led_set(LED_4, Color4, 0);
+ 
+    return;
+}

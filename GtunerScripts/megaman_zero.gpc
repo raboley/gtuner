@@ -1,0 +1,69 @@
+#pragma METAINFO("megaman_zero", 1, 0, "")
+
+combo right_air_slash {
+	set_val(BUTTON_17, 100.0);
+	wait(80);
+	set_val(BUTTON_13, 0.0);
+	set_val(STICK_2_X, 0.0);
+	set_val(BUTTON_12, 100.0);
+	wait(50);
+	set_val(BUTTON_12, 0.0);
+	set_val(STICK_2_X, 0.0);
+	set_val(BUTTON_13, 100.0);
+	wait(50);
+	set_val(BUTTON_11, 100.0);
+	
+}
+
+combo left_air_slash {
+	set_val(BUTTON_17, 100.0);
+	wait(80);
+	set_val(BUTTON_12, 0.0);
+	set_val(STICK_2_X, 0.0);
+	set_val(BUTTON_13, 100.0);
+	wait(50);
+	set_val(BUTTON_13, 0.0);
+	set_val(STICK_2_X, 0.0);
+	set_val(BUTTON_12, 100.0);
+	wait(50);
+	
+}
+
+combo skull_crusher {
+	set_val(BUTTON_11, 100.0);
+}
+
+main {
+
+// 	if(event_active(BUTTON_17)){
+// 		combo_run(right_air_slash);
+// 	}
+	// Side slashes
+	// running right air slash
+// 	if(get_actual(STICK_2_X) == 0.0 && event_active(BUTTON_17)) {
+//         combo_run(right_air_slash);
+//     }
+	// skull crusher always on 
+	if(get_actual(BUTTON_17) > 0.0) {
+		combo_run(skull_crusher);
+	}
+	
+	if(get_actual(STICK_2_X) >= 0.0 && event_active(BUTTON_17)) {
+        combo_run(right_air_slash);
+    }
+	// running left air slash
+	if(get_actual(STICK_2_X) < -30.0 && event_active(BUTTON_17)) {
+        combo_run(left_air_slash);
+    }
+	
+	// map dpad to left stick
+//     if(get_actual(STICK_2_Y) < -30.0) {
+//         set_val(BUTTON_10, 100.0);
+//     } else if(get_actual(STICK_2_Y) > 30.0) {
+//         set_val(BUTTON_11, 100.0);
+//     }    
+//     if(get_actual(STICK_2_X) < -30.0) {
+//         set_val(BUTTON_12, 100.0);
+//     }
+
+}

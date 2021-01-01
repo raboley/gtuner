@@ -1,0 +1,280 @@
+const uint8 disp[] = { 0, _9_, _8_, _7_, _6_, _5_, _4_, _3_, _2_, _1_, _0_ };
+
+int rpm;
+int RapidReloadDelay;
+int single, tens, hundreds;
+int KineticAntiRecoilMode, EnergyAntiRecoilMode, PowerAntiRecoilMode;
+int KineticRapidReloadDelay, EnergyRapidReloadDelay, PowerRapidReloadDelay;
+
+bool setRPM = 0;
+bool weaponFlags[3];
+bool RapidFireFlag = TRUE;
+bool BumperJumperEnabled = FALSE;
+
+uint8 Shoot, ADS;
+uint8 KineticRFActivation, EnergyRFActivation, PowerRFActivation;
+uint8 KineticRFToggle, EnergyRFToggle, PowerRFToggle;
+
+fix32 KineticShotPerMin, EnergyShotPerMin, PowerShotPerMin;
+fix32 AntiRecoilV, AntiRecoilH;
+fix32 KineticAntiRecoilV, KineticAntiRecoilH;
+fix32 EnergyAntiRecoilV, EnergyAntiRecoilH;
+fix32 PowerAntiRecoilV, PowerAntiRecoilH;
+
+init {
+	pmem_load();
+	
+// -------------------------------------------------------------------------- //
+// |                   Read Kinetic Rapid Fire Settings                     | //
+// -------------------------------------------------------------------------- //
+	KineticRFActivation = pmem_read(0);
+	pmem_read(1, &KineticShotPerMin);
+	//pmem_read(3, &KineticShotPerPull);
+	pmem_read(5, &KineticRapidReloadDelay);
+	KineticAntiRecoilMode = pmem_read(7);
+	pmem_read(8, &KineticAntiRecoilV);
+	pmem_read(12, &KineticAntiRecoilH);
+// ========================================================================== //
+	
+	
+// -------------------------------------------------------------------------- //
+// |                    Read Energy Rapid Fire Settings                     | //
+// -------------------------------------------------------------------------- //
+	EnergyRFActivation = pmem_read(16);
+	pmem_read(17, &EnergyShotPerMin);
+	//pmem_read(19, &EnergyShotPerPull);
+	pmem_read(21, &EnergyRapidReloadDelay);
+	EnergyAntiRecoilMode = pmem_read(23);
+	pmem_read(24, &EnergyAntiRecoilV);
+	pmem_read(28, &EnergyAntiRecoilH);
+// ========================================================================== //
+	
+	
+// -------------------------------------------------------------------------- //
+// |                    Read Power Rapid Fire Settings                      | //
+// -------------------------------------------------------------------------- //
+	PowerRFActivation = pmem_read(32);
+	pmem_read(33, &PowerShotPerMin);
+	//pmem_read(35, &PowerShotPerPull);
+	pmem_read(37, &PowerRapidReloadDelay);
+	PowerAntiRecoilMode = pmem_read(39);
+	pmem_read(40, &PowerAntiRecoilV);
+	pmem_read(44, &PowerAntiRecoilH);
+// ========================================================================== //
+
+// -------------------------------------------------------------------------- //
+// |                             Bumper Jumper                              | //
+// -------------------------------------------------------------------------- //
+	BumperJumperEnabled = (pmem_read(54) >> 7) & 0b1;
+	
+	if(BumperJumperEnabled == TRUE) {
+		ADS = BUTTON_7;
+		Shoot = BUTTON_4;
+	} else if(BumperJumperEnabled == FALSE) {
+		ADS = BUTTON_8;
+		Shoot = BUTTON_5;
+	}
+// ========================================================================== //
+}
+
+main {
+	if(get_val(Shoot) && RapidFireFlag) {
+		if(weaponFlags[0] && (KineticRFActivation == 1 || (KineticRFActivation == 2 && get_val(ADS)) || (KineticRFActivation == 3 && !get_val(ADS)))) {
+			rpm = (int)KineticShotPerMin;
+			rapidFire((uint32)KineticShotPerMin);
+		} else if(weaponFlags[1] && (EnergyRFActivation == 1 || (EnergyRFActivation == 2 && get_val(ADS)) || (EnergyRFActivation == 3 && !get_val(ADS)))) {
+			rpm = (int)EnergyShotPerMin;
+			rapidFire((uint32)EnergyShotPerMin);
+		} else if(weaponFlags[2] && (PowerRFActivation == 1 || (PowerRFActivation == 2 && get_val(BUTTON_8)) || (PowerRFActivation == 3 && !get_val(BUTTON_8)))) {
+			rpm = (int)PowerShotPerMin;
+			rapidFire((uint32)PowerShotPerMin);
+		}
+	}
+	
+	if(get_actual(ADS) && event_active(BUTTON_11)) {
+		toggleRapidFire();
+	}
+	
+	if(get_val(BUTTON_17)) {
+		combo_run(reload);
+	}
+	
+// -------------------------------------------------------------------------- //
+// |                         RPM Programming Mode                           | //
+// -------------------------------------------------------------------------- //
+	if(get_actual(BUTTON_8)) {
+		set_val(BUTTON_11, 0.0);
+		if(event_active(BUTTON_11) && time_release(BUTTON_11) < 250) {
+			led_set(LED_1, 15.0, 0);
+			led_set(LED_2, 100.0, 0);
+			led_set(LED_3, 0.0, 0);
+			led_set(LED_4, 0.0, 0);
+			single = (int)(mod(mod((fix32)rpm, 100.0), 10.0));
+			tens = (int)(mod((fix32)rpm, 100.0) / 10.0);
+			hundreds = rpm / 100;
+			setRPM = 1;
+		}
+	}
+	
+	if(setRPM) {
+		set_val(BUTTON_10, 0.0);
+		set_val(BUTTON_11, 0.0);
+		set_val(BUTTON_12, 0.0);
+		set_val(BUTTON_13, 0.0);
+		set_val(BUTTON_14, 0.0);
+		set_val(BUTTON_15, 0.0);
+		set_val(BUTTON_16, 0.0);
+				
+		if(event_release(BUTTON_12)) {
+			hundreds += 1;
+			if(hundreds > 9) hundreds = 0;
+			updateDisplayRPM(hundreds);
+		} else if(event_release(BUTTON_10)) {
+			tens += 1;
+			if(tens > 9) tens = 0;
+			updateDisplayRPM(tens);
+		} else if(event_release(BUTTON_13)) {
+			single += 1;
+			if(single > 9) single = 0;
+			updateDisplayRPM(single);
+		}
+		
+		if(event_release(BUTTON_15)) {
+			combo_run(displayRPM);
+		}
+		
+		if(event_release(BUTTON_17)) {
+			set_val(BUTTON_15, 0.0);
+			rpm = (hundreds * 100) + (tens * 10) + single;
+			updateRPMForSelectedWeapon();
+			setRPM = 0;
+			if(weaponFlags[0]) weaponSwap(1);
+			if(weaponFlags[1]) weaponSwap(2);
+			if(weaponFlags[2]) weaponSwap(3);
+		}
+		
+		if(event_release(BUTTON_16)) {
+			set_val(BUTTON_14, 0);
+			setRPM = 0;
+			if(weaponFlags[0]) weaponSwap(1);
+			if(weaponFlags[1]) weaponSwap(2);
+			if(weaponFlags[2]) weaponSwap(3);
+		}
+	}
+// ========================================================================== //
+}
+
+void rapidFire(uint32 shotPerMin) {
+	uint32 shotPerSec = shotPerMin / 60;
+    uint32 rate = 1000 / shotPerSec;
+    uint32 hold = rate / 2;
+    uint32 timeActive = time_active(Shoot);
+	
+	set_val(Shoot, 100.0);
+	if((KineticAntiRecoilMode == 1 && weaponFlags[0]) || (EnergyAntiRecoilMode == 1 && weaponFlags[1]) || (PowerAntiRecoilMode == 1 && weaponFlags[2])) {
+		AntiRecoil(STICK_1_X, AntiRecoilH);
+		AntiRecoil(STICK_1_Y, AntiRecoilV);
+	} else {
+		AntiRecoil(STICK_1_X, 0.0);
+		AntiRecoil(STICK_1_Y, 0.0);
+	}
+		
+	while(timeActive > rate) {
+		timeActive -= rate;
+	}
+	
+	if(timeActive > hold) {
+		set_val(Shoot, 0.0);
+		if((KineticAntiRecoilMode == 2 && weaponFlags[0]) || (EnergyAntiRecoilMode == 2 && weaponFlags[1]) || (PowerAntiRecoilMode == 2 && weaponFlags[2])) {
+			AntiRecoil(STICK_1_X, AntiRecoilH);
+			AntiRecoil(STICK_1_Y, AntiRecoilV);
+		} else {
+			AntiRecoil(STICK_1_X, 0.0);
+			AntiRecoil(STICK_1_Y, 0.0);
+		}
+	}
+}
+	
+combo reload {
+	set_val(Shoot, 0);
+	wait(RapidReloadDelay);
+	RapidFireFlag = TRUE;
+}
+
+combo displayRPM{
+	display_overlay(disp[10-hundreds], 500);
+	wait(0);
+	wait(480);
+	display_overlay(disp[10-tens], 500);
+	wait(0);
+	wait(480);
+	display_overlay(disp[10-single], 500);
+	wait(0);
+	wait(480);
+}
+
+void toggleRapidFire() {
+	
+	if(weaponFlags[0]) {	
+		if(KineticRFActivation != 0) {
+			KineticRFToggle = KineticRFActivation;
+			KineticRFActivation = 0;
+		} else if(KineticRFActivation == 0 && KineticRFToggle == 0) {
+			KineticRFActivation = 1;
+		} else {
+			KineticRFActivation = KineticRFToggle;
+			KineticRFToggle = 0;
+		}
+		
+		pmem_write(0, KineticRFActivation);
+	} else if(weaponFlags[1]) {
+		if(EnergyRFActivation != 0) {
+			EnergyRFToggle = EnergyRFActivation;
+			EnergyRFActivation = 0;
+		} else if(EnergyRFActivation == 0 && EnergyRFToggle == 0) {
+			EnergyRFActivation = 1;
+		} else {
+			EnergyRFActivation = EnergyRFToggle;
+			EnergyRFToggle = 0;
+		}
+		
+		pmem_write(16, EnergyRFActivation);
+	} else if(weaponFlags[2]) {
+		if(PowerRFActivation != 0) {
+			PowerRFToggle = PowerRFActivation;
+			PowerRFActivation = 0;
+		} else if(PowerRFActivation == 0 && PowerRFToggle == 0) {
+			PowerRFActivation = 1;
+		} else {
+			PowerRFActivation = PowerRFToggle;
+			PowerRFToggle = 0;
+		}
+		
+		pmem_write(32, PowerRFActivation);
+	}
+	
+	pmem_save();
+}
+
+void updateDisplayRPM(int value) {
+	display_overlay(disp[10-value], 500);
+}
+
+void updateRPMForSelectedWeapon() {
+	if(weaponFlags[0]) {
+		KineticShotPerMin = (fix32)rpm;
+		pmem_write(1, rpm);
+	} else if(weaponFlags[1]) {
+		EnergyShotPerMin = (fix32)rpm;
+		pmem_write(17, rpm);
+	} else if(weaponFlags[2]) {
+		PowerShotPerMin = (fix32)rpm;
+		pmem_write(33, rpm);
+	}
+	
+	pmem_save();
+}
+
+void AntiRecoil(uint8 axis, fix32 recoil) {
+	set_val(axis, (recoil * (100.0 - abs(get_val(axis)))) / 100.0 + get_actual(axis));
+}
