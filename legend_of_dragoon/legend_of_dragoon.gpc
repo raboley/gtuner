@@ -1,0 +1,166 @@
+#pragma METAINFO("legend_of_dragoon", 1, 0, "savour")
+
+/*
+	This script will auto battle when in the overwold, and when items are full it will try to discard the new item. 
+	* Note: This script requires computer vision from Gtuner IV, so crystal.py must be running in the computer vision tab
+		prior to trying to use this script.
+		
+	To start/stop it click (share + x) for playstation or (back + a) for xbox 360
+	It works by always pressing the A button to advance combat etc. The it 
+	looks for the triangle shapes in the top right of the overworld, or the square icon when on a ship
+		to determine if it needs to walk back and forth to start a battle.
+	After a battle starts it will just let the auto a spamming do the battle.
+	If the item full menu comes up, it will try to stop spamming A and discard the item we got
+	* Note: it will also discard the top right item sometimes on accident, and has an expectation that your item is healing rain when it gets
+		messed up, so most likely it will try to discard whatever item randomly at this point.
+	* Note2: it also sometimes gets stuck if it goes down on the left menu past the new item
+		which will cause it to get stuck.
+		
+	Things to improve: 
+		0. Figure out a way to make discard menu work without hard coded healing rain expectation. (probably just do 1. and it will be easy)
+		1. Make it so we only spam A when appropriate, so the discard menu is more reliable. (ex.
+			a. When in a battle
+			b. Battle results screen
+			c. When we accidentatly get too close to a town and the enter town menu pops up.
+		2. Test out throwing items like signet stone at the start of a battle, so we can farm 00Parts.
+		3. Consider scripting the additions to be perfect.
+		4. Script the dragoon attacks to be perfect using CV
+	
+*/
+
+bool in_overworld = FALSE;
+bool enabled = FALSE;
+bool items_full = FALSE;
+bool items_menu = FALSE;
+bool healing_rain = FALSE;
+bool sort_menu_appears = FALSE;
+
+main {
+	// Playstation: Touch-Click + CROSS , XBox: View + A
+	if (get_actual(BUTTON_2) && event_active(BUTTON_16)) enabled = !enabled;
+	
+	// Enables the run back and forth battling, and item discard menu.
+	if (enabled) {
+		if(gcv_ready()) {
+			in_overworld = gcv_read(0);
+			items_full = gcv_read(1);
+			items_menu = gcv_read(2);
+			healing_rain = gcv_read(3);
+			sort_menu_appears = gcv_read(4);
+		}
+		
+		if(in_overworld) {
+			combo_run(trigger_battle);
+		}
+		// Doesn't work 100% of the time, may swap out your item accidentally instead of discarding whatever item we picked up.
+		// Currently expects your item to be healing Rain, if it isn't no guarantee it will discard the correct thing.
+		if(items_menu) {
+			if(items_full) {
+				combo_run(down);
+				combo_run(auto_a);
+				combo_run(auto_a);
+			}
+			else if(healing_rain) {
+				combo_run(discard_new_item);
+			}
+			
+			else if(sort_menu_appears) {
+				combo_run(sort_menu_discard);
+			}
+			else {
+				combo_run(slow_a);
+			}
+		}
+		if(!items_menu) {
+			// always be pressin' A to battle and leave results screen
+			// UNLESS we are full on items, then need to do more carful menu nav.
+			combo_run(auto_a);
+		}
+	}
+	
+	
+	
+}
+
+combo trigger_battle
+{
+	set_val(STICK_2_X, 100.0);
+	wait(50);
+	set_val(STICK_2_X, 0.0);
+	wait(50);
+	set_val(STICK_2_X, -100.0);
+	wait(50);
+	set_val(STICK_2_X, 0.0);
+	wait(50);
+}
+
+combo auto_a {
+	set_val(BUTTON_16,100);
+	wait(50);             
+	set_val(BUTTON_16,0);   
+	wait(50);          
+}
+
+combo down {
+	set_val(STICK_2_Y, 100.0);
+	wait(50);
+	set_val(STICK_2_Y, 0.0);
+	wait(50);
+}
+
+combo slow_a {
+	set_val(BUTTON_16,100);
+	wait(50);             
+	set_val(BUTTON_16,0);   
+	wait(1000); 
+}
+
+combo discard_new_item {
+	//a a b a 
+	
+	// a 
+	set_val(BUTTON_16,100);
+	wait(50);             
+	set_val(BUTTON_16,0);   
+	wait(50);  
+	
+	// a
+	set_val(BUTTON_16,100);
+	wait(50);             
+	set_val(BUTTON_16,0);   
+	wait(50);  
+	
+	// b
+	set_val(BUTTON_15,100);
+	wait(50);             
+	set_val(BUTTON_15,0);   
+	wait(50);  
+	
+	// a
+	set_val(BUTTON_16,100);
+	wait(50);             
+	set_val(BUTTON_16,0);   
+	wait(50);  
+}
+
+combo sort_menu_discard {
+	//b b a 
+	
+	// b
+	set_val(BUTTON_15,100);
+	wait(50);             
+	set_val(BUTTON_15,0);   
+	wait(50);  
+	
+	// b
+	set_val(BUTTON_15,100);
+	wait(50);             
+	set_val(BUTTON_15,0);   
+	wait(50);  
+	
+	// a
+	set_val(BUTTON_16,100);
+	wait(50);             
+	set_val(BUTTON_16,0);   
+	wait(50);  
+}
