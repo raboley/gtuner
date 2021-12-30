@@ -3,7 +3,9 @@
 /*
 	This script will auto battle when in the overwold, and when items are full it will try to discard the new item. 
 	* Note: This script requires computer vision from Gtuner IV, so crystal.py must be running in the computer vision tab
-		prior to trying to use this script.
+		prior to trying to use this script. To set that up go to my github via 
+		the docs link or link below, and download the legend_of_dragoon folder and paste it into your Gtuner working directory.
+		https://github.com/raboley/gtuner/tree/master/legend_of_dragoon
 		
 	To start/stop it click (share + x) for playstation or (back + a) for xbox 360
 	It works by always pressing the A button to advance combat etc. The it 
