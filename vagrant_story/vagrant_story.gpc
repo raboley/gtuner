@@ -1,0 +1,157 @@
+#pragma METAINFO("legend_of_dragoon", 1, 0, "savour")
+
+/*
+	This script will auto complete battle combos in vagrant story. It will perform the battle art mapped to the appropriate button while enabled
+	and the button is held. It uses computer vision to check when there is the orange ! on the screen, and will press the held button at the correct time.
+	
+*/
+bool enabled = FALSE;
+bool auto_battle = FALSE;
+bool mimic_farm = FALSE;
+
+bool attack_combo = FALSE;
+bool item_found = FALSE;
+
+bool loading_state = FALSE;
+int random_time;
+
+main {
+	// Playstation: Touch-Click + CROSS , XBox: View + A
+	if (get_actual(BUTTON_2) && event_active(BUTTON_16)) enabled = !enabled;
+	
+	if (get_actual(BUTTON_2) && event_active(BUTTON_15)) auto_battle = !auto_battle;
+	
+	if (get_actual(BUTTON_2) && event_active(BUTTON_14)) {
+		printf("farming mimic");
+		mimic_farm = !mimic_farm;
+		loading_state = FALSE;
+		combo_stop(load_state);
+		combo_stop(last_hit_mimic);
+	}
+	
+	// Farming a mimic for wine. Will kill mimic and check screen for wine drop,
+	// and reload save state if there was no drop. It will press O after a random
+	// time between 100 and 1000 ms to randomize RNG drops, and then reload the save
+	// state if GCV doesn't detect a wine drop after 4 seconds.
+	// SETUP: 
+	//	1. get a mimic down to 1 hit, and then target a body part and make a save state.
+	//  2. press back + Y button to start farming mode.
+	// Wait for wine drop to appear, and farm mode will auto stop.
+	if (mimic_farm) {
+		if (gcv_ready()) {
+			item_found = gcv_read(1);
+		}
+		// if valens found then set mimic farm to false and say you found something.
+		if (item_found){
+			combo_stop(load_state);
+			mimic_farm = FALSE;
+			printf("Found a fine wine!");
+		}
+		else if (!loading_state) {
+			loading_state = TRUE;
+			combo_run(last_hit_mimic);
+			combo_run(load_state);
+		}
+		
+		
+		
+	}
+	
+	if (auto_battle) {
+		combo_run(circle);
+	}
+	
+	// Enables the run back and forth battling, and item discard menu.
+	if (enabled) {
+		if(gcv_ready()) {
+			attack_combo = gcv_read(0);
+		}
+		
+		if(attack_combo) {
+			// left hold to trigger square combo
+			if(get_actual(BUTTON_12)) {
+				combo_run(square);
+			}
+			// up
+			else if(get_actual(BUTTON_10)) {
+				combo_run(triangle);
+			}
+			// right
+			else if(get_actual(BUTTON_13)) {
+				combo_run(circle);
+			}
+			else {
+				combo_run(circle);
+			}
+		}
+	}
+}
+combo square {
+	printf("Pressing square Now!");
+	set_val(BUTTON_17,100);
+	wait(50);             
+	set_val(BUTTON_17,0);   
+	wait(50);          
+}
+
+combo triangle {
+	printf("Pressing triangle Now!");
+	set_val(BUTTON_14,100);
+	wait(50);             
+	set_val(BUTTON_14,0);   
+	wait(50);          
+}
+combo circle {
+	printf("Pressing circle Now!");
+	set_val(BUTTON_15,100);
+	wait(50);             
+	set_val(BUTTON_15,0);   
+	wait(50);          
+}
+
+combo last_hit_mimic {
+	// waiting a random amount of time because I think that influences RNG
+	random_time = random(100, 1000);
+	printf("waiting: %d ms",random_time);
+    wait(random_time);
+	// last hitting a mimic
+	set_val(BUTTON_15,100);
+	wait(50);             
+	set_val(BUTTON_15,0);
+	printf("killing mimic!");
+	// waiting till item screen would pop up.
+	
+}
+
+combo load_state {
+	// last hitting a mimic
+	wait(4000);	
+	printf("hopefully item screen is up!");
+	
+	set_val(BUTTON_3,100);
+	wait(50);             
+	set_val(BUTTON_3,0);   
+	// waiting till item screen would pop up.
+	wait(100);
+	loading_state = FALSE;
+}
+
+
+combo down {
+	set_val(STICK_2_Y, 100.0);
+	wait(50);
+	set_val(STICK_2_Y, 0.0);
+	wait(50);
+}
+
+combo slow_a {
+	set_val(BUTTON_16,100);
+	wait(50);             
+	set_val(BUTTON_16,0);   
+	wait(1000); 
+}
+
+int random(int vmin, int vmax) {
+    return(((int)(rand() * (fix32)(vmax + 1 - vmin))) + vmin);
+}
+ 
